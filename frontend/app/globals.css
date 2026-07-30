@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --brand-surface: #f1f6ff;
+  --brand-card: #f5f6f7;
+  --brand-foreground: #0a2f46;
+  --brand-primary: #0368c3;
+  --brand-border: #d6dfeb;
+}
+
+body {
+  @apply bg-brand-surface font-sans text-brand-foreground antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+@layer components {
+  .page-shell {
+    @apply min-h-screen bg-brand-surface;
+  }
+
+  .card-surface {
+    @apply rounded-lg border border-brand-border bg-brand-card;
+  }
+
+  .card-surface-white {
+    @apply rounded-lg border border-brand-border bg-white;
+  }
+
+  .input-field {
+    @apply w-full rounded-lg border border-brand-border bg-white px-3 py-2.5 text-sm text-brand-foreground outline-none transition placeholder:text-brand-muted/60 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20;
+  }
+
+  .text-muted {
+    @apply text-brand-muted;
+  }
+
+  .link-primary {
+    @apply font-medium text-brand-primary hover:text-brand-primary-hover hover:underline;
+  }
+}

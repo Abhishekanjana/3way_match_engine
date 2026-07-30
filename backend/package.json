@@ -1,0 +1,36 @@
+{
+  "name": "three-way-match-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Three-Way Match Engine API — PO, GRN, Invoice reconciliation",
+  "main": "src/index.js",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "start": "cross-env NODE_ENV=production node src/index.js",
+    "dev": "cross-env NODE_ENV=development nodemon src/index.js",
+    "seed:sku": "node scripts/seedSkuMaster.js",
+    "start:pm2": "pm2 start ecosystem.config.json --no-daemon"
+  },
+  "dependencies": {
+    "@google/genai": "^1.52.0",
+    "compression": "^1.8.0",
+    "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-mongo-sanitize": "^2.2.0",
+    "helmet": "^8.0.0",
+    "joi": "^17.13.3",
+    "mongoose": "^8.9.5",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
+    "winston": "^3.17.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}

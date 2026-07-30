@@ -1,0 +1,52 @@
+/**
+ * SKU Master catalogue for sample PO CI4PO05788 (from project docs/sample-PO.md).
+ * eanCode stores the invoice vendor FG code so PO/GRN numeric codes and invoice codes resolve together.
+ */
+const SAMPLE_SKU_MASTERS = [
+  { skuErpCode: '11423', eanCode: 'FG-P-F-0503', name: 'Cheesy Spicy Veg Momos 24.0 Pieces', hsnCode: '19022010', agreedRate: 220.762, mrp: 305 },
+  { skuErpCode: '11797', eanCode: 'FG-M-F-1703', name: 'Meatigo Hot Wings 250.0 g', hsnCode: '02071400', agreedRate: 126.667, mrp: 175 },
+  { skuErpCode: '18003', eanCode: 'FG-M-F-0620', name: 'Meatigo Chicken Curry Cut Skinless Frozen 450.0 g', hsnCode: '02071300', agreedRate: 141.143, mrp: 195 },
+  { skuErpCode: '18004', eanCode: 'FG-M-F-0619', name: 'Meatigo Chicken Boneless Breast Frozen 450.0 g', hsnCode: '02071300', agreedRate: 199.048, mrp: 275 },
+  { skuErpCode: '18906', name: 'Spring Rolls Veg Frozen 240.0 g', hsnCode: '20049000', agreedRate: 123.048, mrp: 170 },
+  { skuErpCode: '253430', eanCode: 'FG-P-F-0249', name: 'Pork Salami 200.0 g', hsnCode: '16010000', agreedRate: 188.19, mrp: 260 },
+  { skuErpCode: '33387', eanCode: 'FG-P-F-0234', name: 'Frozen Chicken Chilli Salami 200.0 g', hsnCode: '16010000', agreedRate: 126.667, mrp: 175 },
+  { skuErpCode: '33388', name: 'Frozen Chicken Pepperoni Salami 100.0 g', hsnCode: '16010000', agreedRate: 108.571, mrp: 150 },
+  { skuErpCode: '33390', eanCode: 'FG-P-F-0413', name: 'Chicken Seekh Kebab 500.0 g', hsnCode: '16010000', agreedRate: 228, mrp: 315 },
+  { skuErpCode: '398656', eanCode: 'FG-M-F-0602', name: 'Meatigo Chicken Drumsticks 450.0 g', hsnCode: '02071400', agreedRate: 188.19, mrp: 260 },
+  { skuErpCode: '414867', eanCode: 'FG-P-F-1707', name: 'Chinese Veg Spring Rolls 240.0 g', hsnCode: '20049000', agreedRate: 119.429, mrp: 165 },
+  { skuErpCode: '432518', eanCode: 'FG-M-F-0622', name: 'Meatigo Chicken Kheema 450.0 g', hsnCode: '02071400', agreedRate: 199.048, mrp: 275 },
+  { skuErpCode: '4459', eanCode: 'FG-P-F-0505', name: 'Original Chicken Momos 24.0 Pieces', hsnCode: '21069099', agreedRate: 220.762, mrp: 305 },
+  { skuErpCode: '4460', eanCode: 'FG-P-F-0512', name: 'Spicy Chicken Momos 24.0 Pieces', hsnCode: '21069099', agreedRate: 220.762, mrp: 305 },
+  { skuErpCode: '4461', eanCode: 'FG-P-F-0514', name: 'Veg & Paneer Momos 24.0 Pieces', hsnCode: '21069099', agreedRate: 202.667, mrp: 280 },
+  { skuErpCode: '453259', eanCode: 'FG-P-F-0335', name: 'Chicken Cheese & Onion Sausage 250.0 g', hsnCode: '16010000', agreedRate: 144.762, mrp: 200 },
+  { skuErpCode: '4694', eanCode: 'FG-P-F-0504', name: 'Original Chicken Momos 10.0 Pieces', hsnCode: '21069099', agreedRate: 133.905, mrp: 185 },
+  { skuErpCode: '4695', name: 'Spicy Chicken Momos 10.0 Pieces', hsnCode: '21069099', agreedRate: 133.905, mrp: 185 },
+  { skuErpCode: '4697', eanCode: 'FG-P-F-0513', name: 'Veg & Paneer Momos 10.0 Pieces', hsnCode: '21069099', agreedRate: 112.19, mrp: 155 },
+  { skuErpCode: '469735', eanCode: 'FG-M-F-1728', name: 'Meatigo Everyday Chicken Breast (Frozen) 150.0 g', hsnCode: '16021000', agreedRate: 119.429, mrp: 165 },
+  { skuErpCode: '4698', name: 'Chicken Ham 200.0 g', hsnCode: '16023200', agreedRate: 133.905, mrp: 185 },
+  { skuErpCode: '4699', eanCode: 'FG-P-F-0323', name: 'Pork Sausage 250.0 g', hsnCode: '16010000', agreedRate: 170.095, mrp: 235 },
+  { skuErpCode: '4700', eanCode: 'FG-P-F-0236', name: 'Pork Ham 200.0 g', hsnCode: '16024900', agreedRate: 177.333, mrp: 245 },
+  { skuErpCode: '4701', name: 'Pork Breakfast Bacon 300.0 g', hsnCode: '16024900', agreedRate: 267.81, mrp: 370 },
+  { skuErpCode: '470663', eanCode: 'FG-P-F-0580', name: 'Whole Wheat Momos - Veg & Paneer 330.0 g', hsnCode: '16021000', agreedRate: 162.857, mrp: 225 },
+  { skuErpCode: '489632', name: 'Tandoori Momos - Chicken 280.0 g', hsnCode: '19022010', agreedRate: 159.238, mrp: 220 },
+  { skuErpCode: '49168', eanCode: 'FG-P-F-0527', name: 'Peri Peri Veg Momos 15.0 Pieces', hsnCode: '19022010', agreedRate: 88.667, mrp: 245 },
+  { skuErpCode: '498695', eanCode: 'FG-P-F-0247', name: 'Chicken Salami 200.0 g', hsnCode: '16010000', agreedRate: 137.524, mrp: 190 },
+  { skuErpCode: '526303', name: 'Chicken Pepper & Herb Sausage 250.0 g', hsnCode: '16010000', agreedRate: 141.143, mrp: 195 },
+  { skuErpCode: '598770', eanCode: 'FG-P-F-0102', name: 'Pork Breakfast Bacon 150.0 g', hsnCode: '16010000', agreedRate: 152, mrp: 210 },
+  { skuErpCode: '6664', eanCode: 'FG-P-F-0321', name: 'Chicken Sausages 250.0 g', hsnCode: '16010000', agreedRate: 130.286, mrp: 180 },
+  { skuErpCode: '6665', name: 'Chicken Cheese & Chilli Sausages 250.0 g', hsnCode: '16010000', agreedRate: 133.905, mrp: 185 },
+  { skuErpCode: '730016', eanCode: 'FG-P-F-0581', name: 'Whole Wheat Chicken Momos 330.0 g', hsnCode: '16021000', agreedRate: 170.095, mrp: 235 },
+  { skuErpCode: '750414', eanCode: 'FG-P-F-0501', name: 'Super Saver Chicken Momo Pack (Chef Momos) 1.0 kg', hsnCode: '19022010', agreedRate: 247.619, mrp: 650 },
+  { skuErpCode: '755774', eanCode: 'FG-P-F-0564', name: 'Chicken & Cheese Momos 540.0 g', hsnCode: '16021000', agreedRate: 238.857, mrp: 330 },
+  { skuErpCode: '790919', eanCode: 'FG-M-F-1729', name: 'Meatigo Everyday Fish Fillet 200.0 g', hsnCode: '16042000', agreedRate: 188.19, mrp: 260 },
+  { skuErpCode: '81521', eanCode: 'FG-P-F-0542', name: 'Peri Peri Chicken Momos 250.0 g', hsnCode: '19022010', agreedRate: 72.019, mrp: 199 },
+  { skuErpCode: '89201', name: 'Chicken English Breakfast Sausage 1.0 kg', hsnCode: '16010000', agreedRate: 222.857, mrp: 585 },
+  { skuErpCode: '205950', eanCode: 'FG-P-F-0237', name: 'Frozen Pork Pepperoni Salami 100.0 g', hsnCode: '16010000', agreedRate: 133.905, mrp: 185 },
+  { skuErpCode: '507809', eanCode: 'FG-P-F-1911', name: 'Pizza Minis - Chicken Tikka 180.0 g', hsnCode: '19059090', agreedRate: 115.086, mrp: 159 },
+].map((row) => ({
+  ...row,
+  uom: 'PKT',
+  priceTolerance: 0.05,
+}));
+
+module.exports = { SAMPLE_SKU_MASTERS };
