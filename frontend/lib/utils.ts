@@ -37,6 +37,11 @@ export function formatDate(value?: string | null): string {
   });
 }
 
+/** Summary table dates use DD-MM-YYYY per design reference. */
+export function formatTableDate(value?: string | null): string {
+  return formatDate(value).replace(/\//g, '-');
+}
+
 export function cn(...classes: Array<string | false | null | undefined>): string {
   return classes.filter(Boolean).join(' ');
 }

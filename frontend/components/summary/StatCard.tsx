@@ -1,10 +1,22 @@
 import { FileText, Receipt, PackageCheck } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 
-const styles = {
-  po: 'border-brand-primary/30 bg-brand-primary-light text-brand-primary',
-  invoiced: 'border-emerald-200 bg-emerald-50 text-emerald-700',
-  received: 'border-violet-200 bg-violet-50 text-violet-700',
+const cardStyles = {
+  po: {
+    shell: 'border-blue-100 bg-gradient-to-br from-blue-50 to-blue-50/40',
+    iconWrap: 'bg-blue-100 text-brand-primary',
+    value: 'text-brand-primary',
+  },
+  invoiced: {
+    shell: 'border-emerald-100 bg-gradient-to-br from-emerald-50 to-emerald-50/40',
+    iconWrap: 'bg-emerald-100 text-emerald-600',
+    value: 'text-emerald-600',
+  },
+  received: {
+    shell: 'border-violet-100 bg-gradient-to-br from-violet-50 to-violet-50/40',
+    iconWrap: 'bg-violet-100 text-violet-600',
+    value: 'text-violet-600',
+  },
 };
 
 export function StatCard({
@@ -14,7 +26,7 @@ export function StatCard({
 }: {
   label: string;
   value: number;
-  tone: keyof typeof styles;
+  tone: keyof typeof cardStyles;
 }) {
   const icons = {
     po: FileText,
@@ -22,14 +34,17 @@ export function StatCard({
     received: PackageCheck,
   };
   const Icon = icons[tone];
+  const style = cardStyles[tone];
 
   return (
-    <div className={`rounded-lg border p-5 ${styles[tone]}`}>
-      <div className="mb-3 flex items-center gap-2">
+    <div className={`rounded-xl border p-5 ${style.shell}`}>
+      <div className={`mb-4 inline-flex h-11 w-11 items-center justify-center rounded-lg ${style.iconWrap}`}>
         <Icon className="h-5 w-5" />
-        <span className="text-sm font-medium">{label}</span>
       </div>
-      <p className="text-2xl font-bold text-brand-foreground">{formatCurrency(value)}</p>
+      <p className="text-sm font-medium text-brand-muted">{label}</p>
+      <p className={`mt-2 text-3xl font-bold tracking-tight ${style.value}`}>
+        {formatCurrency(value)}
+      </p>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { cn } from '@/lib/utils';
+import { cn, formatTableDate } from '@/lib/utils';
 import type { SummaryResponse } from '@/types/api';
 
 function docLink(row: SummaryResponse['rows'][number], poNumber: string) {
@@ -26,61 +26,70 @@ export function CumulativeTable({
   const { rows, currentStatus } = summary;
 
   return (
-    <div className="card-surface-white overflow-hidden">
-      <div className="border-b border-brand-border px-4 py-3">
-        <h3 className="text-sm font-semibold text-brand-foreground">Associated Invoice &amp; GRN</h3>
-      </div>
-      <div className="overflow-x-auto">
-        <table className="min-w-full text-left text-xs">
-          <thead className="bg-brand-card uppercase tracking-wide text-brand-muted">
-            <tr>
-              <th className="px-4 py-3">Document Type</th>
-              <th className="px-4 py-3">Document No.</th>
-              <th className="px-4 py-3">Date</th>
-              <th className="px-4 py-3">Quantity</th>
-              <th className="px-4 py-3">Cumulative Invoice</th>
-              <th className="px-4 py-3">Cumulative GRN</th>
-              <th className="px-4 py-3">Pending Delivery</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row) => (
-              <tr key={`${row.documentType}-${row.documentNo}-${row.date}`} className="border-t border-brand-border">
-                <td className="px-4 py-3 text-brand-foreground">{row.documentType}</td>
-                <td className="px-4 py-3">
-                  <Link href={docLink(row, poNumber)} className="link-primary font-medium">
-                    {row.documentNo}
-                  </Link>
+    <div>
+      <h3 className="mb-3 text-sm font-semibold text-brand-foreground">Associated Invoice &amp; GRN</h3>
+      <div className="overflow-hidden rounded-lg border border-brand-border">
+        <div className="overflow-x-auto">
+          <table className="min-w-full text-left text-sm">
+            <thead className="border-b border-brand-border bg-brand-card/80">
+              <tr className="text-[11px] font-semibold uppercase tracking-wider text-brand-muted">
+                <th className="px-4 py-3">Document Type</th>
+                <th className="px-4 py-3">Document No.</th>
+                <th className="px-4 py-3">Date</th>
+                <th className="px-4 py-3 text-right">Quantity</th>
+                <th className="px-4 py-3 text-right">Cumulative Invoice</th>
+                <th className="px-4 py-3 text-right">Cumulative GRN</th>
+                <th className="px-4 py-3 text-right">Pending Delivery</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-brand-border bg-white">
+              {rows.map((row) => (
+                <tr key={`${row.documentType}-${row.documentNo}-${row.date}`}>
+                  <td className="px-4 py-3.5 font-medium text-brand-foreground">{row.documentType}</td>
+                  <td className="px-4 py-3.5">
+                    <Link
+                      href={docLink(row, poNumber)}
+                      className="font-medium text-brand-primary hover:underline"
+                    >
+                      {row.documentNo}
+                    </Link>
+                  </td>
+                  <td className="px-4 py-3.5 text-brand-muted">
+                    {formatTableDate(row.date === '-' ? null : row.date)}
+                  </td>
+                  <td className="px-4 py-3.5 text-right text-brand-foreground">{row.quantity}</td>
+                  <td className="px-4 py-3.5 text-right text-brand-foreground">{row.cumulativeInvoice}</td>
+                  <td className="px-4 py-3.5 text-right text-brand-foreground">{row.cumulativeGrn}</td>
+                  <td
+                    className={cn(
+                      'px-4 py-3.5 text-right',
+                      row.pendingDelivery > 0 ? 'font-semibold text-red-600' : 'text-brand-foreground'
+                    )}
+                  >
+                    {row.pendingDelivery}
+                  </td>
+                </tr>
+              ))}
+              <tr className="bg-amber-50/80 font-medium">
+                <td className="px-4 py-3.5 text-brand-foreground">Current Status</td>
+                <td className="px-4 py-3.5 text-brand-muted">—</td>
+                <td className="px-4 py-3.5 text-brand-muted">—</td>
+                <td className="px-4 py-3.5 text-right font-semibold text-brand-foreground">
+                  Remaining: {currentStatus.remainingQty}
                 </td>
-                <td className="px-4 py-3">{row.date}</td>
-                <td className="px-4 py-3">{row.quantity}</td>
-                <td className="px-4 py-3">{row.cumulativeInvoice}</td>
-                <td className="px-4 py-3">{row.cumulativeGrn}</td>
-                <td
-                  className={cn(
-                    'px-4 py-3',
-                    row.pendingDelivery > 0 && 'font-semibold text-red-600'
-                  )}
-                >
-                  {row.pendingDelivery}
+                <td className="px-4 py-3.5 text-right font-semibold text-emerald-700">
+                  {currentStatus.cumulativeInvoiceQty}
+                </td>
+                <td className="px-4 py-3.5 text-right font-semibold text-emerald-700">
+                  {currentStatus.cumulativeGrnQty}
+                </td>
+                <td className="px-4 py-3.5 text-right font-semibold text-red-600">
+                  {currentStatus.pendingDelivery}
                 </td>
               </tr>
-            ))}
-            <tr className="border-t border-yellow-200 bg-yellow-50 font-medium">
-              <td className="px-4 py-3">Current Status</td>
-              <td className="px-4 py-3">—</td>
-              <td className="px-4 py-3">—</td>
-              <td className="px-4 py-3 text-green-700">
-                Remaining: {currentStatus.remainingQty}
-              </td>
-              <td className="px-4 py-3">{currentStatus.cumulativeInvoiceQty}</td>
-              <td className="px-4 py-3">{currentStatus.cumulativeGrnQty}</td>
-              <td className={cn('px-4 py-3', currentStatus.pendingDelivery > 0 && 'text-red-600')}>
-                {currentStatus.pendingDelivery}
-              </td>
-            </tr>
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

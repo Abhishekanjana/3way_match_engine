@@ -6,6 +6,7 @@ import {
 } from '@/components/layout/AppShell';
 import { StatCard } from '@/components/summary/StatCard';
 import { CumulativeTable } from '@/components/summary/CumulativeTable';
+import { SummarySectionTabs } from '@/components/summary/SummarySectionTabs';
 import { useSummary } from '@/hooks/useSummary';
 
 export default function SummaryPage({
@@ -33,14 +34,20 @@ export default function SummaryPage({
   }
 
   return (
-    <div className="space-y-4 p-4">
-      <div className="grid gap-4 md:grid-cols-3">
-        <StatCard label="PO Amount" value={summary.poAmount} tone="po" />
-        <StatCard label="Total Invoiced" value={summary.totalInvoiced} tone="invoiced" />
-        <StatCard label="Total Received" value={summary.totalReceived} tone="received" />
-      </div>
+    <div className="p-6">
+      <SummarySectionTabs
+        summaryContent={
+          <div className="space-y-6">
+            <div className="grid gap-4 md:grid-cols-3">
+              <StatCard label="PO Amount" value={summary.poAmount} tone="po" />
+              <StatCard label="Total Invoiced" value={summary.totalInvoiced} tone="invoiced" />
+              <StatCard label="Total Received" value={summary.totalReceived} tone="received" />
+            </div>
 
-      <CumulativeTable poNumber={poNumber} summary={summary} />
+            <CumulativeTable poNumber={poNumber} summary={summary} />
+          </div>
+        }
+      />
     </div>
   );
 }
