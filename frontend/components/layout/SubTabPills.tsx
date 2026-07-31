@@ -8,7 +8,7 @@ export function SubTabPills({
   onSelect,
   prefix,
 }: {
-  items: Array<{ id: string; label: string }>;
+  items: Array<{ id: string; label: string; status?: string }>;
   activeId?: string;
   onSelect: (id: string) => void;
   prefix: string;
@@ -31,7 +31,10 @@ export function SubTabPills({
               : 'border-brand-border bg-white text-brand-muted hover:border-brand-primary/40 hover:text-brand-foreground'
           )}
         >
-          {prefix}: {item.label}
+          {prefix}: {item.label}{' '}
+          <span className={item.status === 'Duplicate' ? 'text-amber-700' : 'opacity-80'}>
+            {item.status ?? 'Raised'}
+          </span>
         </button>
       ))}
     </div>

@@ -20,6 +20,11 @@ function errorConverter(err, _req, _res, next) {
     statusCode = 409;
     code = 'DUPLICATE_DOCUMENT';
     message = 'This document is already uploaded for the linked PO';
+    logger.warn('MongoDB duplicate key error — check for stale unique indexes on invoices/grns', {
+      code: err.code,
+      keyPattern: err.keyPattern,
+      keyValue: err.keyValue,
+    });
   } else if (err instanceof mongoose.Error) {
     statusCode = 400;
     code = 'DATABASE_ERROR';

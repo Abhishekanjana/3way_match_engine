@@ -60,3 +60,20 @@ export function matchStatusLabel(status: string): string {
       return status;
   }
 }
+
+/** Sub-tab suffix shown after document number (e.g. "GRN: 5107297866 Raised"). */
+export function documentSubTabStatus(
+  docNumber: string,
+  reasons: Array<{ code: string; message: string }>
+): string {
+  const isDuplicate = reasons.some(
+    (reason) =>
+      reason.code === 'duplicate_document' && reason.message.includes(docNumber)
+  );
+
+  if (isDuplicate) {
+    return 'Duplicate';
+  }
+
+  return 'Raised';
+}

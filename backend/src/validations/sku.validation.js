@@ -9,6 +9,7 @@ const createSkuSchema = Joi.object({
   agreedRate: Joi.number().min(0).required(),
   mrp: Joi.number().min(0).allow(null).optional(),
   priceTolerance: Joi.number().min(0).max(1).default(0.05),
+  aliases: Joi.array().items(Joi.string().trim()).default([]),
 });
 
 const updateSkuSchema = createSkuSchema.fork(

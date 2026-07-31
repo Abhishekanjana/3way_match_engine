@@ -51,6 +51,12 @@ router.get(
 );
 
 router.get(
+  '/po-numbers',
+  auth,
+  documentController.listPoNumbers
+);
+
+router.get(
   '/',
   auth,
   validate(listDocumentsSchema, 'query'),

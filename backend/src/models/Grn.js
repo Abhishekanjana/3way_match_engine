@@ -25,6 +25,6 @@ const grnSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-grnSchema.index({ poNumber: 1, grnNumber: 1 }, { unique: true });
+grnSchema.index({ poNumber: 1, grnNumber: 1 });
 
 module.exports = mongoose.model('Grn', grnSchema);

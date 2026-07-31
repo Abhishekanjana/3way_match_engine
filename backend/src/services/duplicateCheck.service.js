@@ -1,46 +1,12 @@
 const PurchaseOrder = require('../models/PurchaseOrder');
 const Grn = require('../models/Grn');
 const Invoice = require('../models/Invoice');
-const ApiError = require('../utils/ApiError');
 const { REASON_CODES } = require('../utils/reasonCodes');
 
-async function assertNotDuplicate(documentType, poNumber, documentNumber) {
-  if (documentType === 'po') {
-    const existing = await PurchaseOrder.findOne({ poNumber });
-    if (existing) {
-      throw new ApiError(
-        409,
-        'DUPLICATE_DOCUMENT',
-        `PO ${poNumber} is already uploaded`
-      );
-    }
-    return;
-  }
-
-  if (documentType === 'grn') {
-    const existing = await Grn.findOne({ poNumber, grnNumber: documentNumber });
-    if (existing) {
-      throw new ApiError(
-        409,
-        'DUPLICATE_DOCUMENT',
-        `GRN ${documentNumber} is already uploaded for PO ${poNumber}`
-      );
-    }
-    return;
-  }
-
-  if (documentType === 'invoice') {
-    const existing = await Invoice.findOne({ poNumber, invoiceNumber: documentNumber });
-    if (existing) {
-      throw new ApiError(
-        409,
-        'DUPLICATE_DOCUMENT',
-        `Invoice ${documentNumber} is already uploaded for PO ${poNumber}`
-      );
-    }
-  }
-}
-
+/**
+ * Post-persistence duplicate detection.
+ * Duplicates are stored (per assignment) and surfaced here + on GET /match.
+ */
 async function checkDuplicates(documentType, poNumber, documentNumber) {
   const warnings = [];
 
@@ -76,4 +42,4 @@ async function checkDuplicates(documentType, poNumber, documentNumber) {
   return warnings;
 }
 
-module.exports = { assertNotDuplicate, checkDuplicates };
+module.exports = { checkDuplicates };

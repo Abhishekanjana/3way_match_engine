@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import { AlertCircle } from 'lucide-react';
 import { cn, formatCurrency } from '@/lib/utils';
-import type { MatchItemRow } from '@/types/api';
+import type { HighlightedField, MatchItemRow } from '@/types/api';
 
 type GridMode = 'po' | 'invoice' | 'grn';
 
@@ -25,10 +25,14 @@ type GridRow = {
   unitMrp: number | null;
   grossAmount: number | null;
   reasons: string[];
-  highlightedFields: ('unitPrice' | 'unitMrp')[];
+  highlightedFields: HighlightedField[];
   unmapped: boolean;
   missingInPo: boolean;
 };
+
+function isHighlighted(fields: HighlightedField[], field: HighlightedField) {
+  return fields.includes(field);
+}
 
 function toGridRow(item: MatchItemRow): GridRow {
   return {
@@ -156,26 +160,74 @@ export function ItemGrid({
                 <td className="px-3 py-2">{row.ean}</td>
                 <td className="px-3 py-2">{row.hsn}</td>
                 <td className="px-3 py-2">{row.uom}</td>
-                {mode !== 'grn' && <td className="px-3 py-2">{row.poQty}</td>}
-                {mode === 'grn' && <td className="px-3 py-2">{row.expectedQty}</td>}
+                {mode !== 'grn' && (
+                  <td
+                    className={cn(
+                      'px-3 py-2',
+                      isHighlighted(row.highlightedFields, 'poQty') && 'bg-red-50 font-medium text-red-700'
+                    )}
+                  >
+                    {row.poQty}
+                  </td>
+                )}
                 {mode === 'grn' && (
                   <td
                     className={cn(
                       'px-3 py-2',
-                      row.reasons.some((code) => code.includes('qty')) && 'bg-red-50'
+                      isHighlighted(row.highlightedFields, 'poQty') && 'bg-red-50 font-medium text-red-700'
+                    )}
+                  >
+                    {row.expectedQty}
+                  </td>
+                )}
+                {mode === 'grn' && (
+                  <td
+                    className={cn(
+                      'px-3 py-2',
+                      isHighlighted(row.highlightedFields, 'grnQty') && 'bg-red-50 font-medium text-red-700'
                     )}
                   >
                     {row.receivedQty}
                   </td>
                 )}
-                {mode === 'invoice' && <td className="px-3 py-2">{row.invoiceQty}</td>}
-                {mode === 'po' && <td className="px-3 py-2">{row.grnQty}</td>}
-                {mode === 'po' && <td className="px-3 py-2">{row.invoiceQty}</td>}
+                {mode === 'invoice' && (
+                  <td
+                    className={cn(
+                      'px-3 py-2',
+                      isHighlighted(row.highlightedFields, 'invoiceQty') &&
+                        'bg-red-50 font-medium text-red-700'
+                    )}
+                  >
+                    {row.invoiceQty}
+                  </td>
+                )}
+                {mode === 'po' && (
+                  <td
+                    className={cn(
+                      'px-3 py-2',
+                      isHighlighted(row.highlightedFields, 'grnQty') && 'bg-red-50 font-medium text-red-700'
+                    )}
+                  >
+                    {row.grnQty}
+                  </td>
+                )}
+                {mode === 'po' && (
+                  <td
+                    className={cn(
+                      'px-3 py-2',
+                      isHighlighted(row.highlightedFields, 'invoiceQty') &&
+                        'bg-red-50 font-medium text-red-700'
+                    )}
+                  >
+                    {row.invoiceQty}
+                  </td>
+                )}
                 {(mode === 'po' || mode === 'invoice') && (
                   <td
                     className={cn(
                       'px-3 py-2',
-                      row.highlightedFields.includes('unitPrice') && 'bg-red-50'
+                      isHighlighted(row.highlightedFields, 'unitPrice') &&
+                        'bg-red-50 font-medium text-red-700'
                     )}
                   >
                     {row.unitPrice ?? '—'}
@@ -184,7 +236,7 @@ export function ItemGrid({
                 <td
                   className={cn(
                     'px-3 py-2',
-                    row.highlightedFields.includes('unitMrp') && 'bg-red-50'
+                    isHighlighted(row.highlightedFields, 'unitMrp') && 'bg-red-50 font-medium text-red-700'
                   )}
                 >
                   {row.unitMrp ?? '—'}

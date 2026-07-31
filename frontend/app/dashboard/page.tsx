@@ -1,29 +1,20 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { AuthGuard } from '@/components/providers/AuthGuard';
 import { Sidebar } from '@/components/layout/Sidebar';
+import { SidebarMain } from '@/components/layout/SidebarMain';
 import { UploadModal } from '@/components/upload/UploadModal';
 import { Button } from '@/components/ui/Button';
-import { useDocuments } from '@/hooks/useDocuments';
+import { usePoNumbers } from '@/hooks/useDocuments';
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { data: documents, isLoading } = useDocuments();
+  const { data: poNumbers = [], isLoading, isError, error } = usePoNumbers();
   const [uploadOpen, setUploadOpen] = useState(false);
   const [manualPo, setManualPo] = useState('');
-
-  const poNumbers = useMemo(() => {
-    const set = new Set<string>();
-    documents?.forEach((doc) => {
-      if (doc.poNumber) {
-        set.add(doc.poNumber);
-      }
-    });
-    return Array.from(set).sort();
-  }, [documents]);
 
   function openPo() {
     const trimmed = manualPo.trim();
@@ -36,7 +27,7 @@ export default function DashboardPage() {
     <AuthGuard>
       <div className="page-shell flex min-h-screen">
         <Sidebar onUploadClick={() => setUploadOpen(true)} />
-        <main className="flex-1 p-6">
+        <SidebarMain className="min-w-0 flex-1 p-6">
           <div className="mb-6 flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-brand-foreground">Dashboard</h1>
@@ -68,7 +59,12 @@ export default function DashboardPage() {
               <h2 className="text-sm font-semibold text-brand-foreground">Recent Purchase Orders</h2>
             </div>
             {isLoading && <p className="p-4 text-sm text-brand-muted">Loading…</p>}
-            {!isLoading && poNumbers.length === 0 && (
+            {isError && (
+              <p className="p-4 text-sm text-red-600">
+                {error instanceof Error ? error.message : 'Failed to load purchase orders'}
+              </p>
+            )}
+            {!isLoading && !isError && poNumbers.length === 0 && (
               <p className="p-4 text-sm text-brand-muted">
                 No documents uploaded yet. Upload a Purchase Order to begin.
               </p>
@@ -87,13 +83,7 @@ export default function DashboardPage() {
               ))}
             </ul>
           </div>
-
-          <div className="mt-4">
-            <Link href="/masters" className="link-primary text-sm">
-              Manage SKU Master →
-            </Link>
-          </div>
-        </main>
+        </SidebarMain>
         <UploadModal open={uploadOpen} onClose={() => setUploadOpen(false)} />
       </div>
     </AuthGuard>

@@ -6,6 +6,8 @@ export type MatchStatus =
 
 export type DocumentType = 'po' | 'grn' | 'invoice';
 
+export type HighlightedField = 'unitPrice' | 'unitMrp' | 'poQty' | 'grnQty' | 'invoiceQty';
+
 export type SkuMaster = {
   _id: string;
   skuErpCode: string;
@@ -16,6 +18,7 @@ export type SkuMaster = {
   agreedRate: number;
   mrp?: number | null;
   priceTolerance?: number;
+  aliases?: string[];
 };
 
 export type MatchReason = {
@@ -36,7 +39,7 @@ export type MatchItemRow = {
   mrp: number | null;
   grossAmount: number | null;
   reasons: string[];
-  highlightedFields: ('unitPrice' | 'unitMrp')[];
+  highlightedFields: HighlightedField[];
   isFullyReconciled?: boolean;
 };
 
@@ -135,6 +138,25 @@ export type UploadJobStatus = {
   error?: { code: string; message: string };
 };
 
+export type UploadProgressStatus = UploadJobStatus['status'] | 'uploading';
+
+export type UploadProgressUpdate = {
+  status: UploadProgressStatus;
+  step: string;
+};
+
+export type MatchAuditStep = {
+  step: string;
+  status: string;
+  message: string;
+  at: string;
+};
+
+export type MatchAuditResponse = {
+  poNumber: string;
+  steps: MatchAuditStep[];
+};
+
 export type ApiErrorBody = {
   error: {
     code: string;
@@ -155,4 +177,5 @@ export type SkuMasterInput = {
   agreedRate: number;
   mrp?: number;
   priceTolerance?: number;
+  aliases?: string[];
 };

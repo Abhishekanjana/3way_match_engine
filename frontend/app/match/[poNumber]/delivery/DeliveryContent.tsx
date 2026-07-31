@@ -14,8 +14,13 @@ import {
 } from '@/components/documents/DocumentFormPanel';
 import { FilePreview } from '@/components/documents/FilePreview';
 import { ItemGrid } from '@/components/documents/ItemGrid';
+import {
+  InsufficientDocsBanner,
+  MismatchBanner,
+} from '@/components/match/MismatchBanner';
 import { useDocument } from '@/hooks/useDocuments';
 import { useMatch } from '@/hooks/useMatch';
+import { documentSubTabStatus } from '@/lib/utils';
 
 export default function DeliveryContent({
   params,
@@ -72,9 +77,16 @@ export default function DeliveryContent({
 
   return (
     <div className="space-y-4">
+      {match?.status === 'insufficient_documents' && <InsufficientDocsBanner />}
+      <MismatchBanner reasons={match?.reasons ?? []} />
+
       <SubTabPills
         prefix="GRN"
-        items={grns.map((grn) => ({ id: grn.id, label: grn.number }))}
+        items={grns.map((grn) => ({
+          id: grn.id,
+          label: grn.number,
+          status: documentSubTabStatus(grn.number, match?.reasons ?? []),
+        }))}
         activeId={activeGrn?.id}
         onSelect={(id) =>
           router.push(`/match/${encodeURIComponent(poNumber)}/delivery?doc=${id}`, {

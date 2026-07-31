@@ -6,6 +6,12 @@ const {
 } = require('../utils/reasonCodes');
 const { normalizeCode } = require('./masterResolver.service');
 
+function startOfDay(value) {
+  const date = new Date(value);
+  date.setHours(0, 0, 0, 0);
+  return date;
+}
+
 function computeMatch({ purchaseOrders = [], grns = [], invoices = [], skuMasters = [] }) {
   if (
     purchaseOrders.length === 0 &&
@@ -208,14 +214,17 @@ function buildItemReasons(entry, sku) {
 
   if (entry.grnQty > entry.poQty) {
     reasons.push(REASON_CODES.GRN_QTY_EXCEEDS_PO_QTY);
+    highlightedFields.push('poQty', 'grnQty');
   }
 
   if (entry.invoiceQty > entry.grnQty) {
     reasons.push(REASON_CODES.INVOICE_QTY_EXCEEDS_GRN_QTY);
+    highlightedFields.push('grnQty', 'invoiceQty');
   }
 
   if (entry.invoiceQty > entry.poQty) {
     reasons.push(REASON_CODES.INVOICE_QTY_EXCEEDS_PO_QTY);
+    highlightedFields.push('poQty', 'invoiceQty');
   }
 
   if (sku && entry.invoiceLines.length > 0) {
@@ -241,7 +250,11 @@ function buildItemReasons(entry, sku) {
     entry.poQty === entry.grnQty &&
     entry.grnQty === entry.invoiceQty;
 
-  return { reasons, highlightedFields, isFullyReconciled };
+  return {
+    reasons,
+    highlightedFields: [...new Set(highlightedFields)],
+    isFullyReconciled,
+  };
 }
 
 function buildItemRows(itemMap, skuMap) {
@@ -335,14 +348,16 @@ function collectDocumentLevelReasons({ purchaseOrders, grns, invoices, reference
   }
 
   if (poDate) {
+    const poDay = startOfDay(poDate);
+
     for (const invoice of invoices) {
       const invoiceDate = invoice.invoiceDate ? new Date(invoice.invoiceDate) : null;
 
-      if (invoiceDate && invoiceDate < poDate) {
+      if (invoiceDate && startOfDay(invoiceDate) > poDay) {
         addReason(
           reasons,
           REASON_CODES.INVOICE_DATE_AFTER_PO_DATE,
-          `Invoice ${invoice.invoiceNumber} date is before PO date`,
+          `Invoice ${invoice.invoiceNumber} date is after PO date`,
           'hard'
         );
       }
@@ -398,4 +413,5 @@ module.exports = {
   computeMatch,
   REASON_CODES,
   getMatchKey,
+  startOfDay,
 };

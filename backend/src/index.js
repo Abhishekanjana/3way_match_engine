@@ -17,21 +17,20 @@ async function ensureSampleCatalogSeeded() {
     return;
   }
 
-  const { seedSkuMasters, reresolveDocumentItems } = require('./services/catalogSeed.service');
-  const PurchaseOrder = require('./models/PurchaseOrder');
-  const Grn = require('./models/Grn');
-  const Invoice = require('./models/Invoice');
+  const { seedSkuMasters } = require('./services/catalogSeed.service');
+  const { scheduleReresolveAllDocuments } = require('./services/documentResolve.service');
 
   await seedSkuMasters();
-  await reresolveDocumentItems(PurchaseOrder);
-  await reresolveDocumentItems(Grn);
-  await reresolveDocumentItems(Invoice);
-  logger.info('Seeded sample SKU Master catalogue and re-resolved document items');
+  scheduleReresolveAllDocuments();
+  logger.info('Seeded sample SKU Master catalogue; document re-resolution queued');
 }
 
 async function startServer() {
   await mongoose.connect(config.mongoose.url);
   logger.info('MongoDB connected');
+
+  const { ensureDuplicateFriendlyIndexes } = require('./services/indexMigration.service');
+  await ensureDuplicateFriendlyIndexes();
 
   await ensureSampleCatalogSeeded();
 

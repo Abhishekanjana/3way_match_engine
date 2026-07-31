@@ -1,0 +1,93 @@
+{
+  "_comment": "Illustrative GET /match/:poNumber response (abbreviated items)",
+  "poNumber": "CI4PO05788",
+  "status": "partially_matched",
+  "reasons": [
+    {
+      "code": "price_mismatch",
+      "message": "Invoice unit rate differs from agreed rate beyond tolerance for FG-CH-001",
+      "level": "soft"
+    }
+  ],
+  "linkedDocuments": {
+    "purchaseOrders": [
+      {
+        "id": "665a1b2c3d4e5f678901234",
+        "number": "CI4PO05788",
+        "date": "2024-01-15T00:00:00.000Z",
+        "type": "po",
+        "createdAt": "2026-03-17T10:00:00.000Z"
+      }
+    ],
+    "grns": [
+      {
+        "id": "665a1b2c3d4e5f678901235",
+        "number": "5107297866",
+        "date": "2024-01-20T00:00:00.000Z",
+        "type": "grn",
+        "createdAt": "2026-03-18T10:00:00.000Z"
+      }
+    ],
+    "invoices": [
+      {
+        "id": "665a1b2c3d4e5f678901236",
+        "number": "INV-2024-001",
+        "date": "2024-01-19T00:00:00.000Z",
+        "type": "invoice",
+        "createdAt": "2026-03-19T10:00:00.000Z"
+      }
+    ]
+  },
+  "items": [
+    {
+      "matchKey": "507f1f77bcf86cd799439011",
+      "description": "Chocolate Bar 50g",
+      "itemCode": "FG-CH-001",
+      "skuMaster": {
+        "_id": "507f1f77bcf86cd799439011",
+        "skuErpCode": "FG-CH-001",
+        "name": "Chocolate Bar 50g",
+        "eanCode": "8901234567890",
+        "hsnCode": "1806",
+        "uom": "EA",
+        "agreedRate": 45,
+        "mrp": 60,
+        "priceTolerance": 0.05
+      },
+      "poQty": 100,
+      "grnQty": 100,
+      "invoiceQty": 100,
+      "unitRate": 48,
+      "mrp": 60,
+      "grossAmount": 4800,
+      "reasons": ["price_mismatch"],
+      "highlightedFields": ["unitPrice"],
+      "isFullyReconciled": false
+    },
+    {
+      "matchKey": "507f1f77bcf86cd799439012",
+      "description": "Chocolate Bar 100g",
+      "itemCode": "FG-CH-002",
+      "skuMaster": {
+        "_id": "507f1f77bcf86cd799439012",
+        "skuErpCode": "FG-CH-002",
+        "name": "Chocolate Bar 100g",
+        "eanCode": "8901234567891",
+        "hsnCode": "1806",
+        "uom": "EA",
+        "agreedRate": 80,
+        "mrp": 110,
+        "priceTolerance": 0.05
+      },
+      "poQty": 50,
+      "grnQty": 50,
+      "invoiceQty": 50,
+      "unitRate": 80,
+      "mrp": 110,
+      "grossAmount": 4000,
+      "reasons": [],
+      "highlightedFields": [],
+      "isFullyReconciled": true
+    }
+  ]
+}

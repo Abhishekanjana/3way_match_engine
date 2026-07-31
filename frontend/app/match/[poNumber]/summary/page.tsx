@@ -6,7 +6,9 @@ import {
 } from '@/components/layout/AppShell';
 import { StatCard } from '@/components/summary/StatCard';
 import { CumulativeTable } from '@/components/summary/CumulativeTable';
+import { MatchTimeline } from '@/components/summary/MatchTimeline';
 import { SummarySectionTabs } from '@/components/summary/SummarySectionTabs';
+import { useMatchAudit } from '@/hooks/useMatchAudit';
 import { useSummary } from '@/hooks/useSummary';
 
 export default function SummaryPage({
@@ -16,6 +18,11 @@ export default function SummaryPage({
 }) {
   const poNumber = decodeURIComponent(params.poNumber);
   const { data: summary, isLoading, error } = useSummary(poNumber);
+  const {
+    data: audit,
+    isLoading: auditLoading,
+    error: auditError,
+  } = useMatchAudit(poNumber);
 
   if (isLoading) {
     return <LoadingBlock label="Loading summary…" />;
@@ -46,6 +53,13 @@ export default function SummaryPage({
 
             <CumulativeTable poNumber={poNumber} summary={summary} />
           </div>
+        }
+        timelineContent={
+          <MatchTimeline
+            audit={audit}
+            isLoading={auditLoading}
+            error={auditError instanceof Error ? auditError : null}
+          />
         }
       />
     </div>

@@ -3,7 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiRequest, apiUploadDocument } from '@/lib/api-client';
 import { queryKeys } from '@/lib/query-keys';
-import type { LoginResponse, MatchResponse } from '@/types/api';
+import type { LoginResponse, MatchResponse, UploadProgressUpdate } from '@/types/api';
 
 export function useMatch(poNumber: string) {
   return useQuery({
@@ -36,7 +36,7 @@ export function useUploadDocument() {
     }: {
       file: File;
       documentType: string;
-      onProgress?: (step: string) => void;
+      onProgress?: (update: UploadProgressUpdate) => void;
     }) => {
       const formData = new FormData();
       formData.append('file', file);
@@ -46,8 +46,9 @@ export function useUploadDocument() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.match(data.poNumber) });
       queryClient.invalidateQueries({ queryKey: queryKeys.summary(data.poNumber) });
+      queryClient.invalidateQueries({ queryKey: queryKeys.matchAudit(data.poNumber) });
       queryClient.invalidateQueries({ queryKey: queryKeys.documents(data.poNumber) });
-      queryClient.invalidateQueries({ queryKey: queryKeys.documents() });
+      queryClient.invalidateQueries({ queryKey: queryKeys.poNumbers });
     },
   });
 }

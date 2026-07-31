@@ -10,6 +10,7 @@ const skuMasterSchema = new mongoose.Schema(
     agreedRate: { type: Number, required: true, min: 0 },
     mrp: { type: Number, min: 0, default: null },
     priceTolerance: { type: Number, default: 0.05, min: 0, max: 1 },
+    aliases: { type: [String], default: [], trim: true },
   },
   { timestamps: true }
 );

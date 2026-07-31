@@ -1,7 +1,8 @@
-import type { ApiErrorBody, UploadJobStatus, UploadResponse } from '@/types/api';
+import type { ApiErrorBody, UploadJobStatus, UploadProgressUpdate, UploadResponse } from '@/types/api';
 import { getToken } from './auth';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? '/api';
+const REQUEST_TIMEOUT_MS = 20_000;
 
 export class ApiClientError extends Error {
   code: string;
@@ -40,23 +41,49 @@ function authHeaders(): HeadersInit {
 }
 
 export async function apiRequest<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(`${API_URL}${path}`, {
-    ...init,
-    headers: {
-      ...authHeaders(),
-      ...(init?.headers ?? {}),
-    },
-  });
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
-  if (!response.ok) {
-    throw await parseError(response);
+  try {
+    const response = await fetch(`${API_URL}${path}`, {
+      ...init,
+      signal: init?.signal ?? controller.signal,
+      headers: {
+        ...authHeaders(),
+        ...(init?.headers ?? {}),
+      },
+    });
+
+    if (!response.ok) {
+      throw await parseError(response);
+    }
+
+    if (response.status === 204) {
+      return undefined as T;
+    }
+
+    return response.json() as Promise<T>;
+  } catch (error) {
+    if (error instanceof DOMException && error.name === 'AbortError') {
+      throw new ApiClientError(
+        408,
+        'REQUEST_TIMEOUT',
+        'Request timed out. Check that the backend is running on port 5000.'
+      );
+    }
+
+    if (error instanceof ApiClientError) {
+      throw error;
+    }
+
+    throw new ApiClientError(
+      503,
+      'NETWORK_ERROR',
+      'Could not reach the server. Ensure the backend is running and try again.'
+    );
+  } finally {
+    clearTimeout(timeoutId);
   }
-
-  if (response.status === 204) {
-    return undefined as T;
-  }
-
-  return response.json() as Promise<T>;
 }
 
 export async function apiBlob(
@@ -85,8 +112,11 @@ export async function apiBlob(
   const contentType = response.headers.get('Content-Type') ?? '';
 
   if (options?.preview && contentType.includes('octet-stream')) {
-    const pdfType = 'application/pdf';
-    return new Blob([buffer], { type: pdfType });
+    return new Blob([buffer], { type: 'application/pdf' });
+  }
+
+  if (options?.preview && contentType.includes('pdf')) {
+    return new Blob([buffer], { type: 'application/pdf' });
   }
 
   if (options?.preview && contentType.startsWith('image/')) {
@@ -131,10 +161,15 @@ function sleep(ms: number) {
 
 export async function apiUploadDocument(
   formData: FormData,
-  onProgress?: (step: string) => void
+  onProgress?: (update: UploadProgressUpdate) => void
 ): Promise<UploadResponse> {
-  const accepted = await apiUpload<{ jobId: string; step?: string }>('/documents/upload', formData);
-  onProgress?.(accepted.step ?? 'Upload received');
+  onProgress?.({ status: 'uploading', step: 'Uploading file…' });
+
+  const accepted = await apiUpload<{ jobId: string; step?: string; status?: string }>(
+    '/documents/upload',
+    formData
+  );
+  onProgress?.({ status: 'queued', step: accepted.step ?? 'Upload received' });
 
   const deadline = Date.now() + UPLOAD_MAX_POLL_MS;
 
@@ -142,7 +177,7 @@ export async function apiUploadDocument(
     await sleep(UPLOAD_POLL_INTERVAL_MS);
 
     const job = await apiRequest<UploadJobStatus>(`/documents/upload/jobs/${accepted.jobId}`);
-    onProgress?.(job.step);
+    onProgress?.({ status: job.status, step: job.step });
 
     if (job.status === 'completed' && job.result) {
       return job.result;

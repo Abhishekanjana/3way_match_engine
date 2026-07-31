@@ -10,18 +10,113 @@ import { cn } from '@/lib/utils';
 
 const STORAGE_KEY = 'sidebar-expanded';
 
+function SidebarLabel({
+  expanded,
+  children,
+}: {
+  expanded: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <span
+      className={cn(
+        'overflow-hidden whitespace-nowrap text-sm font-medium',
+        'transition-[max-width,opacity,margin] duration-300 ease-in-out',
+        expanded ? 'ml-3 max-w-[160px] opacity-100' : 'ml-0 max-w-0 opacity-0'
+      )}
+      aria-hidden={!expanded}
+    >
+      {children}
+    </span>
+  );
+}
+
+function NavItem({
+  expanded,
+  active,
+  href,
+  icon: Icon,
+  label,
+}: {
+  expanded: boolean;
+  active: boolean;
+  href: string;
+  icon: typeof Home;
+  label: string;
+}) {
+  return (
+    <Link
+      href={href}
+      prefetch
+      title={label}
+      className={cn(
+        'group flex h-10 items-center overflow-hidden rounded-lg',
+        'transition-[background-color,color,padding] duration-300 ease-in-out',
+        expanded ? 'px-3' : 'justify-center px-0',
+        active
+          ? 'bg-brand-primary-light text-brand-primary font-medium'
+          : 'text-brand-muted hover:bg-brand-surface hover:text-brand-foreground'
+      )}
+    >
+      <Icon
+        className={cn(
+          'h-5 w-5 shrink-0 transition-transform duration-300 ease-in-out',
+          !expanded && 'group-hover:scale-110'
+        )}
+      />
+      <SidebarLabel expanded={expanded}>{label}</SidebarLabel>
+    </Link>
+  );
+}
+
+function ActionItem({
+  expanded,
+  label,
+  icon: Icon,
+  onClick,
+}: {
+  expanded: boolean;
+  label: string;
+  icon: typeof Upload;
+  onClick?: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      title={label}
+      onClick={onClick}
+      className={cn(
+        'group flex h-10 items-center overflow-hidden rounded-lg text-brand-muted',
+        'transition-[background-color,color,padding] duration-300 ease-in-out',
+        'hover:bg-brand-surface hover:text-brand-foreground',
+        expanded ? 'w-full px-3' : 'w-full justify-center px-0'
+      )}
+    >
+      <Icon
+        className={cn(
+          'h-5 w-5 shrink-0 transition-transform duration-300 ease-in-out',
+          !expanded && 'group-hover:scale-110'
+        )}
+      />
+      <SidebarLabel expanded={expanded}>{label}</SidebarLabel>
+    </button>
+  );
+}
+
 export function Sidebar({ onUploadClick }: { onUploadClick?: () => void }) {
   const pathname = usePathname();
   const router = useRouter();
   const [expanded, setExpanded] = useState(true);
-  const [mounted, setMounted] = useState(false);
+  const [animate, setAnimate] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored !== null) {
       setExpanded(stored === 'true');
     }
-    setMounted(true);
+
+    const frame = requestAnimationFrame(() => setAnimate(true));
+    return () => cancelAnimationFrame(frame);
   }, []);
 
   function toggleExpanded() {
@@ -44,29 +139,45 @@ export function Sidebar({ onUploadClick }: { onUploadClick?: () => void }) {
 
   return (
     <aside
-      suppressHydrationWarning
       className={cn(
-        'flex shrink-0 flex-col border-r border-brand-border bg-white py-4 transition-[width] duration-200 ease-in-out',
-        !mounted ? 'w-56' : expanded ? 'w-56' : 'w-[72px]'
+        'relative flex shrink-0 flex-col overflow-hidden border-r border-brand-border bg-white py-4',
+        expanded ? 'w-56' : 'w-[72px]',
+        animate ? 'transition-[width] duration-300 ease-in-out' : 'transition-none'
       )}
     >
-      <div
-        className={cn(
-          'mb-4 flex items-center px-3',
-          expanded ? 'justify-between gap-2' : 'flex-col gap-3'
-        )}
-      >
-        <Link href="/dashboard" className="flex min-w-0 flex-1 items-center justify-center">
-          {expanded ? (
+      {/* Header — logo centered; toggle aligned to same row (expanded) or stacked (collapsed) */}
+      {expanded ? (
+        <div className="relative mb-4 h-12 shrink-0 px-3">
+          <Link
+            href="/dashboard"
+            className="absolute inset-0 flex items-center justify-center"
+          >
             <Image
               src="/logos/logo-finifi-full.png"
               alt="Finifi"
               width={160}
               height={40}
               priority
-              className="h-9 w-auto max-w-full object-contain"
+              className="h-8 w-auto max-w-[148px] object-contain"
             />
-          ) : (
+          </Link>
+          <button
+            type="button"
+            onClick={toggleExpanded}
+            title="Collapse sidebar"
+            aria-label="Collapse sidebar"
+            className={cn(
+              'absolute right-1 top-1/2 z-10 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-md',
+              'text-brand-muted transition-colors duration-200',
+              'hover:bg-brand-primary-light hover:text-brand-primary'
+            )}
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </button>
+        </div>
+      ) : (
+        <div className="mb-4 flex shrink-0 flex-col items-center justify-center gap-2 px-2">
+          <Link href="/dashboard" className="flex h-9 items-center justify-center">
             <Image
               src="/logos/logo-finifi-icon.png"
               alt="Finifi"
@@ -75,70 +186,40 @@ export function Sidebar({ onUploadClick }: { onUploadClick?: () => void }) {
               priority
               className="h-9 w-9 object-contain"
             />
-          )}
-        </Link>
-
-        <button
-          type="button"
-          onClick={toggleExpanded}
-          title={expanded ? 'Collapse sidebar' : 'Expand sidebar'}
-          aria-label={expanded ? 'Collapse sidebar' : 'Expand sidebar'}
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-brand-border text-brand-muted transition hover:bg-brand-primary-light hover:text-brand-primary"
-        >
-          {expanded ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-        </button>
-      </div>
+          </Link>
+          <button
+            type="button"
+            onClick={toggleExpanded}
+            title="Expand sidebar"
+            aria-label="Expand sidebar"
+            className={cn(
+              'flex h-7 w-7 items-center justify-center rounded-md',
+              'text-brand-muted transition-colors duration-200',
+              'hover:bg-brand-primary-light hover:text-brand-primary'
+            )}
+          >
+            <ChevronRight className="h-4 w-4" />
+          </button>
+        </div>
+      )}
 
       <nav className="flex flex-1 flex-col gap-1 px-2">
-        {items.map(({ href, icon: Icon, label }) => {
-          const active = pathname.startsWith(href);
+        {items.map(({ href, icon, label }) => (
+          <NavItem
+            key={href}
+            href={href}
+            icon={icon}
+            label={label}
+            expanded={expanded}
+            active={pathname.startsWith(href)}
+          />
+        ))}
 
-          return (
-            <Link
-              key={href}
-              href={href}
-              title={label}
-              className={cn(
-                'flex items-center rounded-lg transition',
-                expanded ? 'gap-3 px-3 py-2.5' : 'h-10 w-full justify-center',
-                active
-                  ? 'bg-brand-primary-light text-brand-primary'
-                  : 'text-brand-muted hover:bg-brand-surface hover:text-brand-foreground'
-              )}
-            >
-              <Icon className="h-5 w-5 shrink-0" />
-              {expanded && <span className="truncate text-sm font-medium">{label}</span>}
-            </Link>
-          );
-        })}
-
-        <button
-          type="button"
-          title="Upload"
-          onClick={onUploadClick}
-          className={cn(
-            'flex items-center rounded-lg text-brand-muted transition hover:bg-brand-surface hover:text-brand-foreground',
-            expanded ? 'gap-3 px-3 py-2.5' : 'h-10 w-full justify-center'
-          )}
-        >
-          <Upload className="h-5 w-5 shrink-0" />
-          {expanded && <span className="truncate text-sm font-medium">Upload</span>}
-        </button>
+        <ActionItem expanded={expanded} label="Upload" icon={Upload} onClick={onUploadClick} />
       </nav>
 
       <div className="mt-auto px-2">
-        <button
-          type="button"
-          title="Logout"
-          onClick={logout}
-          className={cn(
-            'flex items-center rounded-lg text-brand-muted transition hover:bg-brand-surface hover:text-brand-foreground',
-            expanded ? 'w-full gap-3 px-3 py-2.5' : 'h-10 w-full justify-center'
-          )}
-        >
-          <LogOut className="h-5 w-5 shrink-0" />
-          {expanded && <span className="truncate text-sm font-medium">Logout</span>}
-        </button>
+        <ActionItem expanded={expanded} label="Logout" icon={LogOut} onClick={logout} />
       </div>
     </aside>
   );

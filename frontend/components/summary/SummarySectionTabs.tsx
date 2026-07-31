@@ -7,8 +7,10 @@ type SummaryView = 'summary' | 'timeline';
 
 export function SummarySectionTabs({
   summaryContent,
+  timelineContent,
 }: {
   summaryContent: React.ReactNode;
+  timelineContent: React.ReactNode;
 }) {
   const [view, setView] = useState<SummaryView>('summary');
 
@@ -41,6 +43,7 @@ export function SummarySectionTabs({
       </div>
 
       {view === 'summary' && <div className="p-6">{summaryContent}</div>}
+      {view === 'timeline' && <div className="p-6">{timelineContent}</div>}
     </div>
   );
 }

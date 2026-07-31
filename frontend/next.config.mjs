@@ -11,6 +11,18 @@ const nextConfig = {
       },
     ];
   },
+  webpack: (config, { isServer }) => {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      canvas: false,
+    };
+
+    if (isServer) {
+      config.externals = [...(config.externals ?? []), 'pdfjs-dist'];
+    }
+
+    return config;
+  },
 };
 
 export default nextConfig;

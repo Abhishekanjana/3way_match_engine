@@ -36,13 +36,13 @@ async function processJob(jobId) {
   };
 
   try {
-    await updateJob(jobId, { status: 'parsing', step: 'Parsing document with AI…' });
-
-    const result = await documentService.uploadDocument(file, job.documentType);
+    const result = await documentService.uploadDocument(file, job.documentType, {
+      onPhase: ({ status, step }) => updateJob(jobId, { status, step }),
+    });
 
     await updateJob(jobId, {
       status: 'completed',
-      step: 'Match updated',
+      step: 'Matched',
       result,
       error: undefined,
     });

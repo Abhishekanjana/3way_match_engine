@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { TabCountBadge } from '@/components/ui/Badge';
 import { cn } from '@/lib/utils';
 
 type Tab = {
@@ -39,13 +40,13 @@ export function TabBar({
               key={tab.href}
               href={tab.href}
               className={cn(
-                'relative py-3 text-sm font-medium transition',
+                'relative inline-flex items-center py-3 text-sm font-medium transition',
                 active ? 'text-brand-primary' : 'text-brand-muted hover:text-brand-foreground'
               )}
             >
               {tab.label}
               {tab.count !== undefined && (
-                <span className="ml-1 text-brand-muted/70">({tab.count})</span>
+                <TabCountBadge count={tab.count} active={active} />
               )}
               {active && (
                 <span className="absolute inset-x-0 -bottom-px h-0.5 bg-brand-primary" />

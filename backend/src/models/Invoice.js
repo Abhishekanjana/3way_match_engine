@@ -26,6 +26,6 @@ const invoiceSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-invoiceSchema.index({ poNumber: 1, invoiceNumber: 1 }, { unique: true });
+invoiceSchema.index({ poNumber: 1, invoiceNumber: 1 });
 
 module.exports = mongoose.model('Invoice', invoiceSchema);

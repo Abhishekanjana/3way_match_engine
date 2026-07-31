@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { AuthGuard } from '@/components/providers/AuthGuard';
 import { Sidebar } from '@/components/layout/Sidebar';
+import { SidebarMain } from '@/components/layout/SidebarMain';
 import { UploadModal } from '@/components/upload/UploadModal';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
@@ -11,11 +12,11 @@ import { useDeleteSku, useSkuMasters } from '@/hooks/useDocuments';
 import { formatCurrency } from '@/lib/utils';
 
 export default function MastersPage() {
-  const { data: skus, isLoading } = useSkuMasters();
+  const { data: skus, isLoading, isError, error: loadError } = useSkuMasters();
   const deleteSku = useDeleteSku();
   const [uploadOpen, setUploadOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   async function confirmDelete() {
     if (!deleteId) {
@@ -25,8 +26,9 @@ export default function MastersPage() {
     try {
       await deleteSku.mutateAsync(deleteId);
       setDeleteId(null);
+      setDeleteError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Delete failed');
+      setDeleteError(err instanceof Error ? err.message : 'Delete failed');
     }
   }
 
@@ -34,7 +36,7 @@ export default function MastersPage() {
     <AuthGuard>
       <div className="page-shell flex min-h-screen">
         <Sidebar onUploadClick={() => setUploadOpen(true)} />
-        <main className="flex-1 p-6">
+        <SidebarMain className="min-w-0 flex-1 p-6">
           <div className="mb-6 flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-brand-foreground">SKU Master</h1>
@@ -45,10 +47,15 @@ export default function MastersPage() {
             </Link>
           </div>
 
-          {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
+          {deleteError && <p className="mb-4 text-sm text-red-600">{deleteError}</p>}
 
           <div className="card-surface-white overflow-hidden">
             {isLoading && <p className="p-4 text-sm text-brand-muted">Loading…</p>}
+            {isError && (
+              <p className="p-4 text-sm text-red-600">
+                {loadError instanceof Error ? loadError.message : 'Failed to load SKU master'}
+              </p>
+            )}
             <div className="overflow-x-auto">
               <table className="min-w-full text-left text-sm">
                 <thead className="bg-brand-card text-xs uppercase text-brand-muted">
@@ -99,7 +106,7 @@ export default function MastersPage() {
               </table>
             </div>
           </div>
-        </main>
+        </SidebarMain>
         <UploadModal open={uploadOpen} onClose={() => setUploadOpen(false)} />
         <Modal open={Boolean(deleteId)} onClose={() => setDeleteId(null)} title="Delete SKU">
           <p className="text-sm text-brand-muted">Are you sure you want to delete this SKU master record?</p>

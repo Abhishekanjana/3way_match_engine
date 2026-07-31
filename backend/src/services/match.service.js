@@ -4,6 +4,7 @@ const Invoice = require('../models/Invoice');
 const SkuMaster = require('../models/SkuMaster');
 const ApiError = require('../utils/ApiError');
 const { computeMatch } = require('./matchEngine.service');
+const { liveResolvePoBundle } = require('./documentResolve.service');
 const { HARD_VIOLATION_CODES, SOFT_WARNING_CODES } = require('../utils/reasonCodes');
 
 async function fetchDocumentsByPoNumber(poNumber) {
@@ -14,26 +15,6 @@ async function fetchDocumentsByPoNumber(poNumber) {
   ]);
 
   return { purchaseOrders, grns, invoices };
-}
-
-async function loadSkuMasters(documents) {
-  const skuIds = new Set();
-
-  for (const collection of documents) {
-    for (const doc of collection) {
-      for (const item of doc.items || []) {
-        if (item.skuMaster) {
-          skuIds.add(String(item.skuMaster));
-        }
-      }
-    }
-  }
-
-  if (skuIds.size === 0) {
-    return [];
-  }
-
-  return SkuMaster.find({ _id: { $in: [...skuIds] } }).lean();
 }
 
 function mapDocumentRef(doc, type) {
@@ -66,17 +47,18 @@ function enrichReasonLevels(reasons) {
 }
 
 async function getMatchByPoNumber(poNumber) {
-  const { purchaseOrders, grns, invoices } = await fetchDocumentsByPoNumber(poNumber);
+  const fetched = await fetchDocumentsByPoNumber(poNumber);
 
   if (
-    purchaseOrders.length === 0 &&
-    grns.length === 0 &&
-    invoices.length === 0
+    fetched.purchaseOrders.length === 0 &&
+    fetched.grns.length === 0 &&
+    fetched.invoices.length === 0
   ) {
     throw new ApiError(404, 'NOT_FOUND', `No documents found for PO number ${poNumber}`);
   }
 
-  const skuMasters = await loadSkuMasters([purchaseOrders, grns, invoices]);
+  const { purchaseOrders, grns, invoices } = await liveResolvePoBundle(fetched);
+  const skuMasters = await SkuMaster.find({}).lean();
   const matchResult = computeMatch({ purchaseOrders, grns, invoices, skuMasters });
 
   return {
@@ -92,4 +74,4 @@ async function getMatchByPoNumber(poNumber) {
   };
 }
 
-module.exports = { getMatchByPoNumber };
+module.exports = { getMatchByPoNumber, fetchDocumentsByPoNumber };

@@ -1,23 +1,78 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import dynamic from 'next/dynamic';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Download, Minus, Plus, Loader2 } from 'lucide-react';
 import { apiBlob } from '@/lib/api-client';
 
-export function FilePreview({ documentId, mimeType, fileName }: {
+const PdfInlineViewer = dynamic(
+  () =>
+    import('@/components/documents/PdfInlineViewer').then((module) => module.PdfInlineViewer),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex h-full items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-brand-primary" />
+      </div>
+    ),
+  }
+);
+
+type PreviewKind = 'pdf' | 'image' | null;
+
+function resolvePreviewKind(
+  blobType: string | null,
+  mimeType?: string,
+  fileName?: string
+): PreviewKind {
+  const types = [blobType, mimeType].filter(Boolean) as string[];
+  const name = fileName?.toLowerCase() ?? '';
+
+  if (types.some((type) => type.includes('pdf')) || name.endsWith('.pdf')) {
+    return 'pdf';
+  }
+
+  if (
+    types.some((type) => type.startsWith('image/')) ||
+    /\.(jpe?g|png|gif|webp)$/i.test(name)
+  ) {
+    return 'image';
+  }
+
+  if (blobType === 'application/octet-stream') {
+    return 'pdf';
+  }
+
+  return null;
+}
+
+export function FilePreview({
+  documentId,
+  mimeType,
+  fileName,
+}: {
   documentId?: string;
   mimeType?: string;
   fileName?: string;
 }) {
   const [blobUrl, setBlobUrl] = useState<string | null>(null);
+  const [pdfData, setPdfData] = useState<ArrayBuffer | null>(null);
+  const [blobType, setBlobType] = useState<string | null>(null);
   const [zoom, setZoom] = useState(100);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const blobUrlRef = useRef<string | null>(null);
 
+  const previewKind = useMemo(
+    () => resolvePreviewKind(blobType, mimeType, fileName),
+    [blobType, mimeType, fileName]
+  );
+
   useEffect(() => {
     if (!documentId) {
       setBlobUrl(null);
+      setPdfData(null);
+      setBlobType(null);
       setError(null);
       return;
     }
@@ -28,14 +83,25 @@ export function FilePreview({ documentId, mimeType, fileName }: {
       setLoading(true);
       setError(null);
       setBlobUrl(null);
+      setPdfData(null);
+      setBlobType(null);
 
       try {
         const blob = await apiBlob(`/documents/${documentId}/file`, controller.signal, {
           preview: true,
         });
-        const objectUrl = URL.createObjectURL(blob);
-        blobUrlRef.current = objectUrl;
-        setBlobUrl(objectUrl);
+        const type = blob.type || null;
+        setBlobType(type);
+
+        const kind = resolvePreviewKind(type, mimeType, fileName);
+
+        if (kind === 'pdf') {
+          setPdfData(await blob.arrayBuffer());
+        } else {
+          const objectUrl = URL.createObjectURL(blob);
+          blobUrlRef.current = objectUrl;
+          setBlobUrl(objectUrl);
+        }
       } catch (err) {
         if (controller.signal.aborted) {
           return;
@@ -58,7 +124,7 @@ export function FilePreview({ documentId, mimeType, fileName }: {
         blobUrlRef.current = null;
       }
     };
-  }, [documentId]);
+  }, [documentId, fileName, mimeType]);
 
   async function download() {
     if (!documentId) {
@@ -78,12 +144,9 @@ export function FilePreview({ documentId, mimeType, fileName }: {
     }
   }
 
-  const isPdf = mimeType?.includes('pdf') || fileName?.toLowerCase().endsWith('.pdf');
-  const isImage = mimeType?.startsWith('image/');
-
   return (
     <div className="card-surface-white flex h-full min-h-[420px] flex-col">
-      <div className="flex items-center justify-between border-b border-brand-border bg-brand-card px-3 py-2">
+      <div className="flex shrink-0 items-center justify-between border-b border-brand-border bg-brand-card px-3 py-2">
         <div className="flex items-center gap-2 text-sm text-brand-muted">
           <button
             type="button"
@@ -112,33 +175,45 @@ export function FilePreview({ documentId, mimeType, fileName }: {
         </button>
       </div>
 
-      <div className="flex flex-1 items-center justify-center overflow-auto p-3">
-        {loading && <Loader2 className="h-8 w-8 animate-spin text-brand-primary" />}
+      <div className="relative min-h-0 flex-1 overflow-hidden bg-brand-card/30">
+        {loading && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <Loader2 className="h-8 w-8 animate-spin text-brand-primary" />
+          </div>
+        )}
+
         {!loading && error && (
-          <p className="text-sm text-red-600">{error}</p>
+          <div className="absolute inset-0 flex items-center justify-center p-4">
+            <p className="text-center text-sm text-red-600">{error}</p>
+          </div>
         )}
-        {!loading && !error && blobUrl && isPdf && (
-          <iframe
-            src={`${blobUrl}#toolbar=1&navpanes=0`}
-            title={fileName ?? 'Document preview'}
-            className="h-[520px] w-full rounded border border-brand-border bg-white"
-            style={{ transform: `scale(${zoom / 100})`, transformOrigin: 'top center' }}
-          />
+
+        {!loading && !error && pdfData && previewKind === 'pdf' && (
+          <PdfInlineViewer data={pdfData} zoom={zoom} fileName={fileName} />
         )}
-        {!loading && !error && blobUrl && isImage && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={blobUrl}
-            alt={fileName ?? 'Document preview'}
-            className="max-h-[520px] max-w-full rounded border border-brand-border bg-white object-contain"
-            style={{ transform: `scale(${zoom / 100})` }}
-          />
+
+        {!loading && !error && blobUrl && previewKind === 'image' && (
+          <div className="flex h-full items-center justify-center overflow-auto p-3">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={blobUrl}
+              alt={fileName ?? 'Document preview'}
+              className="max-h-full max-w-full object-contain"
+              style={{ width: `${zoom}%` }}
+            />
+          </div>
         )}
-        {!loading && !error && blobUrl && !isPdf && !isImage && (
-          <p className="text-sm text-brand-muted">Preview unavailable for this file type.</p>
+
+        {!loading && !error && !pdfData && !blobUrl && previewKind && (
+          <div className="absolute inset-0 flex items-center justify-center p-4">
+            <p className="text-sm text-brand-muted">Preview unavailable for this file type.</p>
+          </div>
         )}
+
         {!documentId && !loading && (
-          <p className="text-sm text-brand-muted">No document selected for preview.</p>
+          <div className="absolute inset-0 flex items-center justify-center p-4">
+            <p className="text-sm text-brand-muted">No document selected for preview.</p>
+          </div>
         )}
       </div>
     </div>

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Sidebar } from '@/components/layout/Sidebar';
+import { SidebarMain } from '@/components/layout/SidebarMain';
 import { TabBar } from '@/components/layout/TabBar';
 import { UploadModal } from '@/components/upload/UploadModal';
 import { StatusBadge } from '@/components/ui/Badge';
@@ -28,7 +29,7 @@ export function AppShell({
   return (
     <div className="page-shell flex min-h-screen">
       <Sidebar onUploadClick={() => setUploadOpen(true)} />
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col transition-[width] duration-300 ease-in-out">
         <TabBar poNumber={poNumber} counts={counts} />
         <div className="border-b border-brand-border bg-brand-card px-4 py-3">
           <div className="flex items-center gap-3">
@@ -38,7 +39,7 @@ export function AppShell({
             )}
           </div>
         </div>
-        <main className="flex-1 overflow-auto bg-brand-surface">{children}</main>
+        <SidebarMain className="flex-1 overflow-auto bg-brand-surface">{children}</SidebarMain>
       </div>
       <UploadModal open={uploadOpen} onClose={() => setUploadOpen(false)} />
     </div>

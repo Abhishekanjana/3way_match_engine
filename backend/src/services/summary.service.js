@@ -3,6 +3,7 @@ const Grn = require('../models/Grn');
 const Invoice = require('../models/Invoice');
 const SkuMaster = require('../models/SkuMaster');
 const ApiError = require('../utils/ApiError');
+const { liveResolvePoBundle } = require('./documentResolve.service');
 
 async function buildSkuRateMap(documents) {
   const skuIds = new Set();
@@ -78,20 +79,33 @@ function formatDate(value) {
   return date.toISOString().slice(0, 10);
 }
 
-function buildSummaryRows(referencePo, invoices, grns) {
+function buildSummaryRows(poNumber, referencePo, invoices, grns) {
   const rows = [];
-  const poQty = sumPoQuantity(referencePo);
+  const poQty = referencePo ? sumPoQuantity(referencePo) : 0;
 
-  rows.push({
-    documentType: 'Original PO',
-    documentNo: referencePo.poNumber,
-    documentId: String(referencePo._id),
-    date: formatDate(referencePo.poDate),
-    quantity: poQty,
-    cumulativeInvoice: 0,
-    cumulativeGrn: 0,
-    pendingDelivery: poQty,
-  });
+  if (referencePo) {
+    rows.push({
+      documentType: 'Original PO',
+      documentNo: referencePo.poNumber,
+      documentId: String(referencePo._id),
+      date: formatDate(referencePo.poDate),
+      quantity: poQty,
+      cumulativeInvoice: 0,
+      cumulativeGrn: 0,
+      pendingDelivery: poQty,
+    });
+  } else {
+    rows.push({
+      documentType: 'Original PO',
+      documentNo: poNumber,
+      documentId: null,
+      date: '-',
+      quantity: 0,
+      cumulativeInvoice: 0,
+      cumulativeGrn: 0,
+      pendingDelivery: 0,
+    });
+  }
 
   const events = [
     ...invoices.map((invoice) => ({
@@ -159,25 +173,30 @@ function buildSummaryRows(referencePo, invoices, grns) {
 }
 
 async function getSummaryByPoNumber(poNumber) {
-  const [purchaseOrders, grns, invoices] = await Promise.all([
+  const fetched = await Promise.all([
     PurchaseOrder.find({ poNumber }).sort({ createdAt: 1 }).lean(),
     Grn.find({ poNumber }).sort({ createdAt: 1 }).lean(),
     Invoice.find({ poNumber }).sort({ createdAt: 1 }).lean(),
-  ]);
+  ]).then(([purchaseOrders, grns, invoices]) => ({ purchaseOrders, grns, invoices }));
 
-  if (purchaseOrders.length === 0) {
-    throw new ApiError(404, 'NOT_FOUND', `No PO found for number ${poNumber}`);
+  if (
+    fetched.purchaseOrders.length === 0 &&
+    fetched.grns.length === 0 &&
+    fetched.invoices.length === 0
+  ) {
+    throw new ApiError(404, 'NOT_FOUND', `No documents found for PO number ${poNumber}`);
   }
 
-  const referencePo = purchaseOrders[0];
-  const allDocuments = [referencePo, ...grns, ...invoices];
+  const { purchaseOrders, grns, invoices } = await liveResolvePoBundle(fetched);
+  const referencePo = purchaseOrders[0] ?? null;
+  const allDocuments = referencePo ? [referencePo, ...grns, ...invoices] : [...grns, ...invoices];
   const skuRateMap = await buildSkuRateMap(allDocuments);
 
-  const { rows, currentStatus } = buildSummaryRows(referencePo, invoices, grns);
+  const { rows, currentStatus } = buildSummaryRows(poNumber, referencePo, invoices, grns);
 
   return {
     poNumber,
-    poAmount: roundCurrency(sumPoAmount(referencePo, skuRateMap)),
+    poAmount: referencePo ? roundCurrency(sumPoAmount(referencePo, skuRateMap)) : 0,
     totalInvoiced: roundCurrency(sumInvoiceAmount(invoices)),
     totalReceived: roundCurrency(sumReceivedAmount(grns, skuRateMap)),
     rows,

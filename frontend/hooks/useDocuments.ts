@@ -5,6 +5,13 @@ import { apiRequest } from '@/lib/api-client';
 import { queryKeys } from '@/lib/query-keys';
 import type { SkuMaster, SkuMasterInput, StoredDocument } from '@/types/api';
 
+export function usePoNumbers() {
+  return useQuery({
+    queryKey: queryKeys.poNumbers,
+    queryFn: () => apiRequest<string[]>('/documents/po-numbers'),
+  });
+}
+
 export function useDocuments(poNumber?: string) {
   const query = poNumber ? `?poNumber=${encodeURIComponent(poNumber)}` : '';
 
@@ -26,6 +33,7 @@ export function useSkuMasters() {
   return useQuery({
     queryKey: queryKeys.skuMaster,
     queryFn: () => apiRequest<SkuMaster[]>('/masters/sku'),
+    staleTime: 60_000,
   });
 }
 

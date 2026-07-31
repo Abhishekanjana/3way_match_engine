@@ -1,0 +1,18 @@
+{
+  "_comment": "Shape of rawParsed stored on PurchaseOrder after Gemini extraction (illustrative)",
+  "poNumber": "CI4PO05788",
+  "poDate": "2024-01-15",
+  "vendorName": "Sample Vendor Pvt Ltd",
+  "items": [
+    {
+      "itemCode": "FG-CH-001",
+      "description": "Chocolate Bar 50g",
+      "quantity": 100
+    },
+    {
+      "itemCode": "FG-CH-002",
+      "description": "Chocolate Bar 100g",
+      "quantity": 50
+    }
+  ]
+}

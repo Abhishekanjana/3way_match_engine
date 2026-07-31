@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { AuthGuard } from '@/components/providers/AuthGuard';
 import { Sidebar } from '@/components/layout/Sidebar';
+import { SidebarMain } from '@/components/layout/SidebarMain';
 import { Button } from '@/components/ui/Button';
 import { SkuForm } from '@/components/masters/SkuForm';
 import { useCreateSku } from '@/hooks/useDocuments';
@@ -22,7 +23,7 @@ export default function NewSkuPage() {
     <AuthGuard>
       <div className="page-shell flex min-h-screen">
         <Sidebar />
-        <main className="flex-1 p-6">
+        <SidebarMain className="min-w-0 flex-1 p-6">
           <div className="mb-6">
             <Link href="/masters" className="link-primary text-sm">
               ← Back to SKU Master
@@ -36,7 +37,7 @@ export default function NewSkuPage() {
               error={createSku.error instanceof Error ? createSku.error.message : null}
             />
           </div>
-        </main>
+        </SidebarMain>
       </div>
     </AuthGuard>
   );

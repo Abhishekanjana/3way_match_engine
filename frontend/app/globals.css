@@ -15,6 +15,17 @@ body {
   @apply bg-brand-surface font-sans text-brand-foreground antialiased;
 }
 
+/* Next.js dev overlay anchor — keep out of document layout */
+nextjs-portal {
+  position: fixed;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+nextjs-portal > * {
+  pointer-events: auto;
+}
+
 * {
   box-sizing: border-box;
 }

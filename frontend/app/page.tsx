@@ -11,5 +11,9 @@ export default function HomePage() {
     router.replace(isAuthenticated() ? '/dashboard' : '/login');
   }, [router]);
 
-  return null;
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-brand-surface text-sm text-brand-muted">
+      Loading…
+    </div>
+  );
 }

@@ -33,6 +33,11 @@ const list = catchAsync(async (req, res) => {
   res.json(docs);
 });
 
+const listPoNumbers = catchAsync(async (_req, res) => {
+  const poNumbers = await documentService.listPoNumbers();
+  res.json(poNumbers);
+});
+
 const getFile = catchAsync(async (req, res) => {
   const { absolutePath, mimeType, originalFileName } = await documentService.getDocumentFile(
     req.params.id
@@ -41,10 +46,14 @@ const getFile = catchAsync(async (req, res) => {
   const isPreview = req.get('X-Document-Preview') === '1';
 
   if (isPreview) {
-    // PDFs are served as octet-stream so download managers (e.g. IDM) do not intercept preview.
     if (mimeType?.startsWith('image/')) {
       res.setHeader('Content-Type', mimeType);
+      res.setHeader('Content-Disposition', 'inline');
+    } else if (mimeType?.includes('pdf')) {
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', 'inline');
     } else {
+      // Fallback for download-manager bypass; client maps octet-stream to PDF for preview.
       res.setHeader('Content-Type', 'application/octet-stream');
     }
     res.setHeader('Cache-Control', 'private, no-store');
@@ -59,4 +68,4 @@ const getFile = catchAsync(async (req, res) => {
   res.sendFile(absolutePath);
 });
 
-module.exports = { upload, getUploadJob, getById, list, getFile };
+module.exports = { upload, getUploadJob, getById, list, listPoNumbers, getFile };

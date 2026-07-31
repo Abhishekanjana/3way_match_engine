@@ -9,7 +9,7 @@ const ApiError = require('../utils/ApiError');
 const { parseDocumentDate } = require('../utils/date');
 const { parseDocument } = require('./gemini.service');
 const { resolveItems } = require('./masterResolver.service');
-const { assertNotDuplicate, checkDuplicates } = require('./duplicateCheck.service');
+const { checkDuplicates } = require('./duplicateCheck.service');
 
 const MODELS_BY_TYPE = {
   po: PurchaseOrder,
@@ -120,10 +120,14 @@ function shapeDocumentResponse(document, documentType) {
   };
 }
 
-async function uploadDocument(file, documentType) {
+async function uploadDocument(file, documentType, options = {}) {
+  const { onPhase } = options;
+  const setPhase = (status, step) => onPhase?.({ status, step });
+
   let poNumber;
 
   try {
+    setPhase('parsing', 'Parsing document with AI…');
     await appendAuditStep('pending', 'parse', 'started', `Parsing ${documentType} upload`);
 
     const { parsed, rawParsed } = await parseDocument(file, documentType);
@@ -132,15 +136,15 @@ async function uploadDocument(file, documentType) {
 
     await appendAuditStep(poNumber, 'parse', 'success', 'Document parsed successfully');
 
+    setPhase('resolving', 'Mapping line items to SKU master…');
     payload.items = await resolveItems(payload.items);
     await appendAuditStep(poNumber, 'resolve_masters', 'success', 'SKU master resolution complete');
 
-    const documentNumber = getDocumentNumber(documentType, payload);
-    await assertNotDuplicate(documentType, poNumber, documentNumber);
-
+    setPhase('saving', 'Saving document and updating match…');
     const document = await persistDocument(documentType, payload);
     await appendAuditStep(poNumber, 'persist', 'success', `Stored ${documentType} document`);
 
+    const documentNumber = getDocumentNumber(documentType, payload);
     const duplicateWarnings = await checkDuplicates(documentType, poNumber, documentNumber);
 
     if (duplicateWarnings.length > 0) {
@@ -229,24 +233,25 @@ async function getDocumentFile(id) {
 async function listDocuments(filters = {}) {
   const { type, poNumber } = filters;
   const results = [];
+  const projection = '-rawParsed -filePath -mimeType -originalFileName';
 
   const shouldInclude = (docType) => !type || type === docType;
 
   if (shouldInclude('po')) {
     const query = poNumber ? { poNumber } : {};
-    const docs = await PurchaseOrder.find(query).sort({ createdAt: -1 }).lean();
+    const docs = await PurchaseOrder.find(query).select(projection).sort({ createdAt: -1 }).lean();
     results.push(...docs.map((doc) => ({ ...doc, documentType: 'po', id: String(doc._id) })));
   }
 
   if (shouldInclude('grn')) {
     const query = poNumber ? { poNumber } : {};
-    const docs = await Grn.find(query).sort({ createdAt: -1 }).lean();
+    const docs = await Grn.find(query).select(projection).sort({ createdAt: -1 }).lean();
     results.push(...docs.map((doc) => ({ ...doc, documentType: 'grn', id: String(doc._id) })));
   }
 
   if (shouldInclude('invoice')) {
     const query = poNumber ? { poNumber } : {};
-    const docs = await Invoice.find(query).sort({ createdAt: -1 }).lean();
+    const docs = await Invoice.find(query).select(projection).sort({ createdAt: -1 }).lean();
     results.push(
       ...docs.map((doc) => ({ ...doc, documentType: 'invoice', id: String(doc._id) }))
     );
@@ -255,9 +260,20 @@ async function listDocuments(filters = {}) {
   return results.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 }
 
+async function listPoNumbers() {
+  const [fromPo, fromGrn, fromInvoice] = await Promise.all([
+    PurchaseOrder.distinct('poNumber'),
+    Grn.distinct('poNumber'),
+    Invoice.distinct('poNumber'),
+  ]);
+
+  return [...new Set([...fromPo, ...fromGrn, ...fromInvoice])].sort();
+}
+
 module.exports = {
   uploadDocument,
   getDocumentById,
   getDocumentFile,
   listDocuments,
+  listPoNumbers,
 };

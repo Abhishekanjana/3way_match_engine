@@ -1,12 +1,18 @@
 const SkuMaster = require('../models/SkuMaster');
 const ApiError = require('../utils/ApiError');
+const { scheduleReresolveAllDocuments } = require('./documentResolve.service');
 
 async function createSku(payload) {
-  return SkuMaster.create(payload);
+  const sku = await SkuMaster.create(payload);
+  scheduleReresolveAllDocuments();
+  return sku;
 }
 
 async function listSkus() {
-  return SkuMaster.find().sort({ skuErpCode: 1 }).lean();
+  return SkuMaster.find()
+    .select('skuErpCode name eanCode hsnCode uom agreedRate mrp priceTolerance createdAt updatedAt')
+    .sort({ skuErpCode: 1 })
+    .lean();
 }
 
 async function getSkuById(id) {
@@ -27,6 +33,7 @@ async function updateSku(id, payload) {
     throw new ApiError(404, 'NOT_FOUND', 'SKU Master record not found');
   }
 
+  scheduleReresolveAllDocuments();
   return sku;
 }
 
@@ -35,6 +42,8 @@ async function deleteSku(id) {
   if (!sku) {
     throw new ApiError(404, 'NOT_FOUND', 'SKU Master record not found');
   }
+
+  scheduleReresolveAllDocuments();
   return sku;
 }
 

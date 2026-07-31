@@ -14,8 +14,13 @@ import {
 } from '@/components/documents/DocumentFormPanel';
 import { FilePreview } from '@/components/documents/FilePreview';
 import { ItemGrid } from '@/components/documents/ItemGrid';
+import {
+  InsufficientDocsBanner,
+  MismatchBanner,
+} from '@/components/match/MismatchBanner';
 import { useDocument } from '@/hooks/useDocuments';
 import { useMatch } from '@/hooks/useMatch';
+import { documentSubTabStatus } from '@/lib/utils';
 
 export default function FulfillmentContent({
   params,
@@ -83,9 +88,16 @@ export default function FulfillmentContent({
 
   return (
     <div className="space-y-4">
+      {match?.status === 'insufficient_documents' && <InsufficientDocsBanner />}
+      <MismatchBanner reasons={match?.reasons ?? []} />
+
       <SubTabPills
         prefix="Invoice"
-        items={invoices.map((invoice) => ({ id: invoice.id, label: invoice.number }))}
+        items={invoices.map((invoice) => ({
+          id: invoice.id,
+          label: invoice.number,
+          status: documentSubTabStatus(invoice.number, match?.reasons ?? []),
+        }))}
         activeId={activeInvoice?.id}
         onSelect={(id) =>
           router.push(
