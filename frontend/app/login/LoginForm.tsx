@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { ArrowRight, Layers3, Sparkles } from 'lucide-react';
+import { ArrowRight, Sparkles } from 'lucide-react';
 import { useLogin } from '@/hooks/useMatch';
 import { setToken } from '@/lib/auth';
 
@@ -36,9 +37,14 @@ export default function LoginForm() {
           </div>
 
           <div className="mb-6 flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-primary shadow-md shadow-brand-primary/25">
-              <Layers3 className="h-6 w-6 text-white" />
-            </div>
+            <Image
+              src="/logos/logo-finifi-icon.png"
+              alt="Finifi"
+              width={40}
+              height={40}
+              priority
+              className="h-10 w-10 object-contain"
+            />
             <div>
               <p className="text-sm font-semibold tracking-wide text-brand-foreground">Finifi</p>
               <p className="text-xs text-brand-muted">P2P · Three-Way Match</p>
