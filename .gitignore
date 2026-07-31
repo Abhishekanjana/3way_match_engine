@@ -26,7 +26,6 @@ Thumbs.db
 
 # Local docs (not for repo)
 project docs/
-README.md
 
 # Test / coverage
 coverage/
