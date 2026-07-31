@@ -1,14 +1,14 @@
-const express = require('express');
-const auth = require('../../middlewares/auth');
-const upload = require('../../middlewares/upload');
-const validate = require('../../middlewares/validate');
-const documentController = require('../../controllers/document.controller');
-const {
+import express from 'express';
+import auth from '../../middlewares/auth.js';
+import upload from '../../middlewares/upload.js';
+import validate from '../../middlewares/validate.js';
+import * as documentController from '../../controllers/document.controller.js';
+import {
   uploadSchema,
   listDocumentsSchema,
   idParamSchema,
   uploadJobIdParamSchema,
-} = require('../../validations/document.validation');
+} from '../../validations/document.validation.js';
 
 const router = express.Router();
 
@@ -77,4 +77,4 @@ router.get(
   documentController.getById
 );
 
-module.exports = router;
+export default router;

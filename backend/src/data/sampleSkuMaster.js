@@ -49,4 +49,4 @@ const SAMPLE_SKU_MASTERS = [
   priceTolerance: 0.05,
 }));
 
-module.exports = { SAMPLE_SKU_MASTERS };
+export { SAMPLE_SKU_MASTERS };

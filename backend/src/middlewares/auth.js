@@ -1,5 +1,5 @@
-const ApiError = require('../utils/ApiError');
-const config = require('../config/config');
+import ApiError from '../utils/ApiError.js';
+import config from '../config/config.js';
 
 function auth(req, _res, next) {
   const header = req.headers.authorization;
@@ -17,4 +17,4 @@ function auth(req, _res, next) {
   return next();
 }
 
-module.exports = auth;
+export default auth;

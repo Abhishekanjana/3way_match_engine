@@ -1,7 +1,7 @@
-const PurchaseOrder = require('../models/PurchaseOrder');
-const Grn = require('../models/Grn');
-const Invoice = require('../models/Invoice');
-const { REASON_CODES } = require('../utils/reasonCodes');
+import PurchaseOrder from '../models/PurchaseOrder.js';
+import Grn from '../models/Grn.js';
+import Invoice from '../models/Invoice.js';
+import { REASON_CODES } from '../utils/reasonCodes.js';
 
 /**
  * Post-persistence duplicate detection.
@@ -42,4 +42,4 @@ async function checkDuplicates(documentType, poNumber, documentNumber) {
   return warnings;
 }
 
-module.exports = { checkDuplicates };
+export { checkDuplicates };

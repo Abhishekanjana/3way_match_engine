@@ -1,7 +1,7 @@
-const logger = require('../config/logger');
-const UploadJob = require('../models/UploadJob');
-const ApiError = require('../utils/ApiError');
-const documentService = require('./document.service');
+import logger from '../config/logger.js';
+import UploadJob from '../models/UploadJob.js';
+import ApiError from '../utils/ApiError.js';
+import * as documentService from './document.service.js';
 
 async function updateJob(jobId, patch) {
   return UploadJob.findByIdAndUpdate(jobId, patch, { new: true });
@@ -93,7 +93,7 @@ async function getJobStatus(jobId) {
   };
 }
 
-module.exports = {
+export {
   createJob,
   getJobStatus,
   processJobAsync,

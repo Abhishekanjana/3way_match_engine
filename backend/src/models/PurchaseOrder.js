@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const poItemSchema = new mongoose.Schema(
   {
@@ -26,4 +26,4 @@ const purchaseOrderSchema = new mongoose.Schema(
 
 purchaseOrderSchema.index({ poNumber: 1, createdAt: 1 });
 
-module.exports = mongoose.model('PurchaseOrder', purchaseOrderSchema);
+export default mongoose.model('PurchaseOrder', purchaseOrderSchema);

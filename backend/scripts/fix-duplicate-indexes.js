@@ -4,11 +4,11 @@
  *
  * Run: node scripts/fix-duplicate-indexes.js
  */
-const mongoose = require('mongoose');
-const config = require('../src/config/config');
-const logger = require('../src/config/logger');
-const Invoice = require('../src/models/Invoice');
-const Grn = require('../src/models/Grn');
+import mongoose from 'mongoose';
+import config from '../src/config/config.js';
+import logger from '../src/config/logger.js';
+import Invoice from '../src/models/Invoice.js';
+import Grn from '../src/models/Grn.js';
 
 const STALE_UNIQUE_INDEXES = [
   { model: Invoice, collection: 'invoices', name: 'poNumber_1_invoiceNumber_1' },

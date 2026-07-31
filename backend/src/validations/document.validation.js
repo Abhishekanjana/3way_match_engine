@@ -1,4 +1,4 @@
-const Joi = require('joi');
+import Joi from 'joi';
 
 const loginSchema = Joi.object({
   username: Joi.string().optional(),
@@ -26,7 +26,7 @@ const uploadJobIdParamSchema = Joi.object({
   jobId: Joi.string().hex().length(24).required(),
 });
 
-module.exports = {
+export {
   loginSchema,
   uploadSchema,
   listDocumentsSchema,

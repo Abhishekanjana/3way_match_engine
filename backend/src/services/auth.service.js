@@ -1,7 +1,7 @@
-const config = require('../config/config');
+import config from '../config/config.js';
 
 async function login(_credentials) {
   return { token: config.authToken };
 }
 
-module.exports = { login };
+export { login };

@@ -1,8 +1,8 @@
-const mongoose = require('mongoose');
-const config = require('../config/config');
-const SkuMaster = require('../models/SkuMaster');
-const { SAMPLE_SKU_MASTERS } = require('../data/sampleSkuMaster');
-const { reresolveAllDocuments } = require('./documentResolve.service');
+import mongoose from 'mongoose';
+import config from '../config/config.js';
+import SkuMaster from '../models/SkuMaster.js';
+import { SAMPLE_SKU_MASTERS } from '../data/sampleSkuMaster.js';
+import { reresolveAllDocuments } from './documentResolve.service.js';
 
 async function seedSkuMasters() {
   await SkuMaster.deleteMany({});
@@ -19,4 +19,4 @@ async function seedAndReresolve() {
   return { skuCount, ...reresolved };
 }
 
-module.exports = { seedSkuMasters, seedAndReresolve };
+export { seedSkuMasters, seedAndReresolve };

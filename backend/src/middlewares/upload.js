@@ -1,8 +1,8 @@
-const path = require('path');
-const fs = require('fs');
-const multer = require('multer');
-const ApiError = require('../utils/ApiError');
-const config = require('../config/config');
+import path from 'node:path';
+import fs from 'node:fs';
+import multer from 'multer';
+import ApiError from '../utils/ApiError.js';
+import config from '../config/config.js';
 
 const ALLOWED_MIME_TYPES = new Set([
   'application/pdf',
@@ -41,4 +41,4 @@ const upload = multer({
   limits: { fileSize: config.upload.maxFileSizeMb * 1024 * 1024 },
 });
 
-module.exports = upload;
+export default upload;

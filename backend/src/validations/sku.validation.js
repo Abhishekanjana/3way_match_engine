@@ -1,4 +1,4 @@
-const Joi = require('joi');
+import Joi from 'joi';
 
 const createSkuSchema = Joi.object({
   skuErpCode: Joi.string().trim().required(),
@@ -21,4 +21,4 @@ const idParamSchema = Joi.object({
   id: Joi.string().hex().length(24).required(),
 });
 
-module.exports = { createSkuSchema, updateSkuSchema, idParamSchema };
+export { createSkuSchema, updateSkuSchema, idParamSchema };

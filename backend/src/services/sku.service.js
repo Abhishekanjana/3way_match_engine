@@ -1,6 +1,6 @@
-const SkuMaster = require('../models/SkuMaster');
-const ApiError = require('../utils/ApiError');
-const { scheduleReresolveAllDocuments } = require('./documentResolve.service');
+import SkuMaster from '../models/SkuMaster.js';
+import ApiError from '../utils/ApiError.js';
+import { scheduleReresolveAllDocuments } from './documentResolve.service.js';
 
 async function createSku(payload) {
   const sku = await SkuMaster.create(payload);
@@ -47,4 +47,4 @@ async function deleteSku(id) {
   return sku;
 }
 
-module.exports = { createSku, listSkus, getSkuById, updateSku, deleteSku };
+export { createSku, listSkus, getSkuById, updateSku, deleteSku };

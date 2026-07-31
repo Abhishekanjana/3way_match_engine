@@ -1,12 +1,12 @@
-const logger = require('../config/logger');
-const PurchaseOrder = require('../models/PurchaseOrder');
-const Grn = require('../models/Grn');
-const Invoice = require('../models/Invoice');
-const {
+import logger from '../config/logger.js';
+import PurchaseOrder from '../models/PurchaseOrder.js';
+import Grn from '../models/Grn.js';
+import Invoice from '../models/Invoice.js';
+import {
   resolveItems,
   buildSkuLookupMaps,
   lookupSkuMasterId,
-} = require('./masterResolver.service');
+} from './masterResolver.service.js';
 
 function stripSkuMaster(items) {
   return (items || []).map((item) => {
@@ -121,7 +121,7 @@ function scheduleReresolveAllDocuments() {
   });
 }
 
-module.exports = {
+export {
   liveResolveDocuments,
   liveResolvePoBundle,
   reresolveDocumentItems,

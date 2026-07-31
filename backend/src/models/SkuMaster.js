@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const skuMasterSchema = new mongoose.Schema(
   {
@@ -17,4 +17,4 @@ const skuMasterSchema = new mongoose.Schema(
 
 skuMasterSchema.index({ eanCode: 1 });
 
-module.exports = mongoose.model('SkuMaster', skuMasterSchema);
+export default mongoose.model('SkuMaster', skuMasterSchema);

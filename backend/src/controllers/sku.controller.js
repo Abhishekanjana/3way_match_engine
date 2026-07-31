@@ -1,5 +1,5 @@
-const catchAsync = require('../utils/catchAsync');
-const skuService = require('../services/sku.service');
+import catchAsync from '../utils/catchAsync.js';
+import * as skuService from '../services/sku.service.js';
 
 const create = catchAsync(async (req, res) => {
   const sku = await skuService.createSku(req.body);
@@ -26,4 +26,4 @@ const remove = catchAsync(async (req, res) => {
   res.status(204).send();
 });
 
-module.exports = { create, list, getById, update, remove };
+export { create, list, getById, update, remove };

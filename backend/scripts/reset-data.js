@@ -5,17 +5,17 @@
  * Run: npm run reset:data
  * Then re-seed SKU catalogue: npm run seed:sku
  */
-const fs = require('fs');
-const path = require('path');
-const mongoose = require('mongoose');
-const config = require('../src/config/config');
-const logger = require('../src/config/logger');
-const PurchaseOrder = require('../src/models/PurchaseOrder');
-const Grn = require('../src/models/Grn');
-const Invoice = require('../src/models/Invoice');
-const UploadJob = require('../src/models/UploadJob');
-const MatchAudit = require('../src/models/MatchAudit');
-const SkuMaster = require('../src/models/SkuMaster');
+import fs from 'node:fs';
+import path from 'node:path';
+import mongoose from 'mongoose';
+import config from '../src/config/config.js';
+import logger from '../src/config/logger.js';
+import PurchaseOrder from '../src/models/PurchaseOrder.js';
+import Grn from '../src/models/Grn.js';
+import Invoice from '../src/models/Invoice.js';
+import UploadJob from '../src/models/UploadJob.js';
+import MatchAudit from '../src/models/MatchAudit.js';
+import SkuMaster from '../src/models/SkuMaster.js';
 
 function clearUploadFiles(uploadDir) {
   if (!fs.existsSync(uploadDir)) {

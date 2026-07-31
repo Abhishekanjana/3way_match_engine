@@ -1,14 +1,14 @@
-const express = require('express');
-const cors = require('cors');
-const helmet = require('helmet');
-const compression = require('compression');
-const mongoSanitize = require('express-mongo-sanitize');
-const swaggerUi = require('swagger-ui-express');
-const config = require('./config/config');
-const { successHandler, errorHandler: morganErrorHandler } = require('./config/morgan');
-const { swaggerSpec } = require('./config/swagger');
-const v1Routes = require('./routes/v1');
-const { notFoundHandler, errorConverter, errorHandler } = require('./middlewares/errorHandler');
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import compression from 'compression';
+import mongoSanitize from 'express-mongo-sanitize';
+import swaggerUi from 'swagger-ui-express';
+import config from './config/config.js';
+import { successHandler, errorHandler as morganErrorHandler } from './config/morgan.js';
+import { swaggerSpec } from './config/swagger.js';
+import v1Routes from './routes/v1/index.js';
+import { notFoundHandler, errorConverter, errorHandler } from './middlewares/errorHandler.js';
 
 function createApp() {
   const app = express();
@@ -62,4 +62,4 @@ function createApp() {
   return app;
 }
 
-module.exports = { createApp };
+export { createApp };

@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const uploadJobSchema = new mongoose.Schema(
   {
@@ -23,4 +23,4 @@ const uploadJobSchema = new mongoose.Schema(
 
 uploadJobSchema.index({ createdAt: 1 }, { expireAfterSeconds: 60 * 60 * 24 });
 
-module.exports = mongoose.model('UploadJob', uploadJobSchema);
+export default mongoose.model('UploadJob', uploadJobSchema);

@@ -1,7 +1,8 @@
-const { describe, it } = require('node:test');
-const assert = require('node:assert/strict');
-const { computeMatch, REASON_CODES } = require('../src/services/matchEngine.service');
-const { MATCH_STATUS } = require('../src/utils/reasonCodes');
+import { describe, it } from 'node:test';
+import assert from 'node:assert/strict';
+import { computeMatch, REASON_CODES } from '../src/services/matchEngine.service.js';
+import { MATCH_STATUS } from '../src/utils/reasonCodes.js';
+import { normalizeCode } from '../src/services/masterResolver.service.js';
 
 const SKU_ID = '507f1f77bcf86cd799439011';
 const SKU_ID_2 = '507f1f77bcf86cd799439012';
@@ -356,7 +357,6 @@ describe('computeMatch', () => {
 
 describe('masterResolver.normalizeCode', () => {
   it('trims and lowercases item codes', () => {
-    const { normalizeCode } = require('../src/services/masterResolver.service');
     assert.equal(normalizeCode('  ABC123  '), 'abc123');
   });
 });

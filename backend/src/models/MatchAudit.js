@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const auditStepSchema = new mongoose.Schema(
   {
@@ -18,4 +18,4 @@ const matchAuditSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model('MatchAudit', matchAuditSchema);
+export default mongoose.model('MatchAudit', matchAuditSchema);

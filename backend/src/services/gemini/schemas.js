@@ -81,4 +81,4 @@ function getResponseSchema(documentType) {
   return RESPONSE_SCHEMAS[documentType];
 }
 
-module.exports = { getResponseSchema };
+export { getResponseSchema };

@@ -1,9 +1,9 @@
-const express = require('express');
-const authRoutes = require('./auth.routes');
-const documentRoutes = require('./document.routes');
-const matchRoutes = require('./match.routes');
-const summaryRoutes = require('./summary.routes');
-const skuRoutes = require('./sku.routes');
+import express from 'express';
+import authRoutes from './auth.routes.js';
+import documentRoutes from './document.routes.js';
+import matchRoutes from './match.routes.js';
+import summaryRoutes from './summary.routes.js';
+import skuRoutes from './sku.routes.js';
 
 const router = express.Router();
 
@@ -13,4 +13,4 @@ router.use('/match', matchRoutes);
 router.use('/summary', summaryRoutes);
 router.use('/masters/sku', skuRoutes);
 
-module.exports = router;
+export default router;

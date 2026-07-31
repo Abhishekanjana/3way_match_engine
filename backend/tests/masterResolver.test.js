@@ -1,9 +1,10 @@
-const { describe, it } = require('node:test');
-const assert = require('node:assert/strict');
-const {
+import { describe, it } from 'node:test';
+import assert from 'node:assert/strict';
+import {
   lookupSkuMasterId,
   normalizeText,
-} = require('../src/services/masterResolver.service');
+  normalizeCode,
+} from '../src/services/masterResolver.service.js';
 
 describe('lookupSkuMasterId', () => {
   it('matches skuErpCode first, then eanCode, case-insensitively', () => {
@@ -82,7 +83,6 @@ describe('lookupSkuMasterId', () => {
 
 describe('masterResolver.normalizeCode', () => {
   it('trims and lowercases item codes', () => {
-    const { normalizeCode } = require('../src/services/masterResolver.service');
     assert.equal(normalizeCode('  ABC123  '), 'abc123');
   });
 

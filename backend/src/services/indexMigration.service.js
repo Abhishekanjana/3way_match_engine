@@ -1,6 +1,6 @@
-const Invoice = require('../models/Invoice');
-const Grn = require('../models/Grn');
-const logger = require('../config/logger');
+import Invoice from '../models/Invoice.js';
+import Grn from '../models/Grn.js';
+import logger from '../config/logger.js';
 
 const STALE_UNIQUE_INDEXES = [
   { model: Invoice, name: 'poNumber_1_invoiceNumber_1' },
@@ -42,4 +42,4 @@ async function ensureDuplicateFriendlyIndexes() {
   await Grn.syncIndexes();
 }
 
-module.exports = { ensureDuplicateFriendlyIndexes };
+export { ensureDuplicateFriendlyIndexes };

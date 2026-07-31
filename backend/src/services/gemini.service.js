@@ -1,9 +1,9 @@
-const config = require('../config/config');
-const logger = require('../config/logger');
-const ApiError = require('../utils/ApiError');
-const { validateParsedDocument } = require('../validations/gemini.validation');
-const { getPrompt } = require('./gemini/prompts');
-const { getResponseSchema } = require('./gemini/schemas');
+import config from '../config/config.js';
+import logger from '../config/logger.js';
+import ApiError from '../utils/ApiError.js';
+import { validateParsedDocument } from '../validations/gemini.validation.js';
+import { getPrompt } from './gemini/prompts.js';
+import { getResponseSchema } from './gemini/schemas.js';
 
 const FILE_POLL_INTERVAL_MS = 2000;
 const FILE_POLL_MAX_ATTEMPTS = 30;
@@ -191,4 +191,4 @@ async function parseDocument(file, documentType) {
   }
 }
 
-module.exports = { parseDocument };
+export { parseDocument };

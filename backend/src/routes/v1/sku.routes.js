@@ -1,12 +1,12 @@
-const express = require('express');
-const auth = require('../../middlewares/auth');
-const validate = require('../../middlewares/validate');
-const skuController = require('../../controllers/sku.controller');
-const {
+import express from 'express';
+import auth from '../../middlewares/auth.js';
+import validate from '../../middlewares/validate.js';
+import * as skuController from '../../controllers/sku.controller.js';
+import {
   createSkuSchema,
   updateSkuSchema,
   idParamSchema,
-} = require('../../validations/sku.validation');
+} from '../../validations/sku.validation.js';
 
 const router = express.Router();
 
@@ -16,4 +16,4 @@ router.get('/:id', auth, validate(idParamSchema, 'params'), skuController.getByI
 router.patch('/:id', auth, validate(idParamSchema, 'params'), validate(updateSkuSchema), skuController.update);
 router.delete('/:id', auth, validate(idParamSchema, 'params'), skuController.remove);
 
-module.exports = router;
+export default router;

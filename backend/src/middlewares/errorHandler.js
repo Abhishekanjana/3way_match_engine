@@ -1,7 +1,7 @@
-const mongoose = require('mongoose');
-const logger = require('../config/logger');
-const config = require('../config/config');
-const ApiError = require('../utils/ApiError');
+import mongoose from 'mongoose';
+import logger from '../config/logger.js';
+import config from '../config/config.js';
+import ApiError from '../utils/ApiError.js';
 
 function notFoundHandler(_req, _res, next) {
   next(new ApiError(404, 'NOT_FOUND', 'Route not found'));
@@ -52,4 +52,4 @@ function errorHandler(err, _req, res, _next) {
   });
 }
 
-module.exports = { notFoundHandler, errorConverter, errorHandler };
+export { notFoundHandler, errorConverter, errorHandler };

@@ -1,11 +1,11 @@
-const PurchaseOrder = require('../models/PurchaseOrder');
-const Grn = require('../models/Grn');
-const Invoice = require('../models/Invoice');
-const SkuMaster = require('../models/SkuMaster');
-const ApiError = require('../utils/ApiError');
-const { computeMatch } = require('./matchEngine.service');
-const { liveResolvePoBundle } = require('./documentResolve.service');
-const { HARD_VIOLATION_CODES, SOFT_WARNING_CODES } = require('../utils/reasonCodes');
+import PurchaseOrder from '../models/PurchaseOrder.js';
+import Grn from '../models/Grn.js';
+import Invoice from '../models/Invoice.js';
+import SkuMaster from '../models/SkuMaster.js';
+import ApiError from '../utils/ApiError.js';
+import { computeMatch } from './matchEngine.service.js';
+import { liveResolvePoBundle } from './documentResolve.service.js';
+import { HARD_VIOLATION_CODES, SOFT_WARNING_CODES } from '../utils/reasonCodes.js';
 
 async function fetchDocumentsByPoNumber(poNumber) {
   const [purchaseOrders, grns, invoices] = await Promise.all([
@@ -74,4 +74,4 @@ async function getMatchByPoNumber(poNumber) {
   };
 }
 
-module.exports = { getMatchByPoNumber, fetchDocumentsByPoNumber };
+export { getMatchByPoNumber, fetchDocumentsByPoNumber };

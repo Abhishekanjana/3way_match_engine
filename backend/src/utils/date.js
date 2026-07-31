@@ -11,4 +11,4 @@ function parseDocumentDate(value) {
   return Number.isNaN(parsed.getTime()) ? null : parsed;
 }
 
-module.exports = { parseDocumentDate };
+export { parseDocumentDate };

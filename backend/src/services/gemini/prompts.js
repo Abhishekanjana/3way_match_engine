@@ -40,4 +40,4 @@ function getPrompt(documentType) {
   return PROMPTS[documentType];
 }
 
-module.exports = { getPrompt };
+export { getPrompt };

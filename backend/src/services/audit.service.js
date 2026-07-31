@@ -1,4 +1,4 @@
-const MatchAudit = require('../models/MatchAudit');
+import MatchAudit from '../models/MatchAudit.js';
 
 async function getAuditByPoNumber(poNumber) {
   const audit = await MatchAudit.findOne({ poNumber }).lean();
@@ -13,4 +13,4 @@ async function getAuditByPoNumber(poNumber) {
   };
 }
 
-module.exports = { getAuditByPoNumber };
+export { getAuditByPoNumber };

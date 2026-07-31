@@ -2,6 +2,7 @@
   "name": "three-way-match-backend",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "description": "Three-Way Match Engine API — PO, GRN, Invoice reconciliation",
   "main": "src/index.js",
   "engines": {

@@ -1,7 +1,12 @@
-const path = require('path');
-const Joi = require('joi');
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
+import Joi from 'joi';
+import dotenv from 'dotenv';
 
-require('dotenv').config({ path: path.join(__dirname, '../../.env') });
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config({ path: path.join(__dirname, '../../.env') });
 
 const BACKEND_ROOT = path.join(__dirname, '../..');
 
@@ -46,4 +51,4 @@ const config = {
   backendRoot: BACKEND_ROOT,
 };
 
-module.exports = config;
+export default config;

@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const { seedAndReresolve } = require('../src/services/catalogSeed.service');
+import mongoose from 'mongoose';
+import { seedAndReresolve } from '../src/services/catalogSeed.service.js';
 
 seedAndReresolve()
   .then((result) => {

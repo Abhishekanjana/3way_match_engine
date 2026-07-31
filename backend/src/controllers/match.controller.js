@@ -1,6 +1,6 @@
-const catchAsync = require('../utils/catchAsync');
-const matchService = require('../services/match.service');
-const auditService = require('../services/audit.service');
+import catchAsync from '../utils/catchAsync.js';
+import * as matchService from '../services/match.service.js';
+import * as auditService from '../services/audit.service.js';
 
 const getByPoNumber = catchAsync(async (req, res) => {
   const result = await matchService.getMatchByPoNumber(req.params.poNumber);
@@ -12,4 +12,4 @@ const getAuditByPoNumber = catchAsync(async (req, res) => {
   res.json(result);
 });
 
-module.exports = { getByPoNumber, getAuditByPoNumber };
+export { getByPoNumber, getAuditByPoNumber };

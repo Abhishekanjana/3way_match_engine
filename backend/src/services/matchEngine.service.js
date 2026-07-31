@@ -1,10 +1,10 @@
-const {
+import {
   REASON_CODES,
   MATCH_STATUS,
   HARD_VIOLATION_CODES,
   SOFT_WARNING_CODES,
-} = require('../utils/reasonCodes');
-const { normalizeCode } = require('./masterResolver.service');
+} from '../utils/reasonCodes.js';
+import { normalizeCode } from './masterResolver.service.js';
 
 function startOfDay(value) {
   const date = new Date(value);
@@ -409,7 +409,7 @@ function rollUpStatus(reasons, items) {
   return MATCH_STATUS.PARTIALLY_MATCHED;
 }
 
-module.exports = {
+export {
   computeMatch,
   REASON_CODES,
   getMatchKey,

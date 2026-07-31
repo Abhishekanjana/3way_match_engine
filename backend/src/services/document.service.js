@@ -1,15 +1,15 @@
-const path = require('path');
-const fs = require('fs');
-const logger = require('../config/logger');
-const PurchaseOrder = require('../models/PurchaseOrder');
-const Grn = require('../models/Grn');
-const Invoice = require('../models/Invoice');
-const MatchAudit = require('../models/MatchAudit');
-const ApiError = require('../utils/ApiError');
-const { parseDocumentDate } = require('../utils/date');
-const { parseDocument } = require('./gemini.service');
-const { resolveItems } = require('./masterResolver.service');
-const { checkDuplicates } = require('./duplicateCheck.service');
+import path from 'node:path';
+import fs from 'node:fs';
+import logger from '../config/logger.js';
+import PurchaseOrder from '../models/PurchaseOrder.js';
+import Grn from '../models/Grn.js';
+import Invoice from '../models/Invoice.js';
+import MatchAudit from '../models/MatchAudit.js';
+import ApiError from '../utils/ApiError.js';
+import { parseDocumentDate } from '../utils/date.js';
+import { parseDocument } from './gemini.service.js';
+import { resolveItems } from './masterResolver.service.js';
+import { checkDuplicates } from './duplicateCheck.service.js';
 
 const MODELS_BY_TYPE = {
   po: PurchaseOrder,
@@ -270,7 +270,7 @@ async function listPoNumbers() {
   return [...new Set([...fromPo, ...fromGrn, ...fromInvoice])].sort();
 }
 
-module.exports = {
+export {
   uploadDocument,
   getDocumentById,
   getDocumentFile,

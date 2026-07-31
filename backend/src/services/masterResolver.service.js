@@ -1,4 +1,4 @@
-const SkuMaster = require('../models/SkuMaster');
+import SkuMaster from '../models/SkuMaster.js';
 
 function normalizeCode(value) {
   return String(value ?? '').trim().toLowerCase();
@@ -171,7 +171,7 @@ async function resolveItems(items) {
   }));
 }
 
-module.exports = {
+export {
   resolveItemToMaster,
   resolveItems,
   normalizeCode,

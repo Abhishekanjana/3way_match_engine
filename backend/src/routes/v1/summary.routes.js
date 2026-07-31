@@ -1,8 +1,8 @@
-const express = require('express');
-const auth = require('../../middlewares/auth');
-const validate = require('../../middlewares/validate');
-const summaryController = require('../../controllers/summary.controller');
-const { poNumberParamSchema } = require('../../validations/document.validation');
+import express from 'express';
+import auth from '../../middlewares/auth.js';
+import validate from '../../middlewares/validate.js';
+import * as summaryController from '../../controllers/summary.controller.js';
+import { poNumberParamSchema } from '../../validations/document.validation.js';
 
 const router = express.Router();
 
@@ -29,4 +29,4 @@ router.get(
   summaryController.getByPoNumber
 );
 
-module.exports = router;
+export default router;

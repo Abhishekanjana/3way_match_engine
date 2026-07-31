@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const grnItemSchema = new mongoose.Schema(
   {
@@ -27,4 +27,4 @@ const grnSchema = new mongoose.Schema(
 
 grnSchema.index({ poNumber: 1, grnNumber: 1 });
 
-module.exports = mongoose.model('Grn', grnSchema);
+export default mongoose.model('Grn', grnSchema);

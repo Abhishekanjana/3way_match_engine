@@ -1,7 +1,7 @@
-const ApiError = require('../utils/ApiError');
-const catchAsync = require('../utils/catchAsync');
-const documentService = require('../services/document.service');
-const uploadJobService = require('../services/uploadJob.service');
+import ApiError from '../utils/ApiError.js';
+import catchAsync from '../utils/catchAsync.js';
+import * as documentService from '../services/document.service.js';
+import * as uploadJobService from '../services/uploadJob.service.js';
 
 const upload = catchAsync(async (req, res) => {
   if (!req.file) {
@@ -68,4 +68,4 @@ const getFile = catchAsync(async (req, res) => {
   res.sendFile(absolutePath);
 });
 
-module.exports = { upload, getUploadJob, getById, list, listPoNumbers, getFile };
+export { upload, getUploadJob, getById, list, listPoNumbers, getFile };

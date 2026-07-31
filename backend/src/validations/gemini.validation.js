@@ -1,4 +1,4 @@
-const Joi = require('joi');
+import Joi from 'joi';
 
 const isoDateString = Joi.string().trim().required();
 
@@ -56,4 +56,4 @@ function validateParsedDocument(documentType, payload) {
   return schema.validate(payload, { abortEarly: false, stripUnknown: true });
 }
 
-module.exports = { validateParsedDocument, PARSED_SCHEMAS };
+export { validateParsedDocument, PARSED_SCHEMAS };

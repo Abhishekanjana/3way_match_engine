@@ -1,7 +1,11 @@
-const mongoose = require('mongoose');
-const { createApp } = require('./app');
-const config = require('./config/config');
-const logger = require('./config/logger');
+import mongoose from 'mongoose';
+import { createApp } from './app.js';
+import config from './config/config.js';
+import logger from './config/logger.js';
+import SkuMaster from './models/SkuMaster.js';
+import { seedSkuMasters } from './services/catalogSeed.service.js';
+import { scheduleReresolveAllDocuments } from './services/documentResolve.service.js';
+import { ensureDuplicateFriendlyIndexes } from './services/indexMigration.service.js';
 
 let server;
 
@@ -10,15 +14,11 @@ async function ensureSampleCatalogSeeded() {
     return;
   }
 
-  const SkuMaster = require('./models/SkuMaster');
   const skuCount = await SkuMaster.countDocuments();
 
   if (skuCount > 0) {
     return;
   }
-
-  const { seedSkuMasters } = require('./services/catalogSeed.service');
-  const { scheduleReresolveAllDocuments } = require('./services/documentResolve.service');
 
   await seedSkuMasters();
   scheduleReresolveAllDocuments();
@@ -29,7 +29,6 @@ async function startServer() {
   await mongoose.connect(config.mongoose.url);
   logger.info('MongoDB connected');
 
-  const { ensureDuplicateFriendlyIndexes } = require('./services/indexMigration.service');
   await ensureDuplicateFriendlyIndexes();
 
   await ensureSampleCatalogSeeded();
