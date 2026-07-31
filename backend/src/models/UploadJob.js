@@ -4,7 +4,7 @@ const uploadJobSchema = new mongoose.Schema(
   {
     status: {
       type: String,
-      enum: ['queued', 'parsing', 'resolving', 'saving', 'completed', 'failed'],
+      enum: ['queued', 'parsing', 'resolving', 'saving', 'matching', 'completed', 'failed'],
       default: 'queued',
     },
     step: { type: String, default: 'Upload received' },

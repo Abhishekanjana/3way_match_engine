@@ -40,9 +40,13 @@ async function processJob(jobId) {
       onPhase: ({ status, step }) => updateJob(jobId, { status, step }),
     });
 
+    const matchLabel = result.matchStatus
+      ? result.matchStatus.replace(/_/g, ' ')
+      : 'complete';
+
     await updateJob(jobId, {
       status: 'completed',
-      step: 'Matched',
+      step: `Match: ${matchLabel}`,
       result,
       error: undefined,
     });

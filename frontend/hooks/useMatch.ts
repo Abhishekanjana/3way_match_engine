@@ -44,6 +44,19 @@ export function useUploadDocument() {
       return apiUploadDocument(formData, onProgress);
     },
     onSuccess: (data) => {
+      queryClient.setQueryData<MatchResponse>(
+        queryKeys.match(data.poNumber),
+        (current) =>
+          current
+            ? { ...current, status: data.matchStatus, reasons: data.matchReasons }
+            : {
+                poNumber: data.poNumber,
+                status: data.matchStatus,
+                reasons: data.matchReasons,
+                linkedDocuments: { purchaseOrders: [], grns: [], invoices: [] },
+                items: [],
+              }
+      );
       queryClient.invalidateQueries({ queryKey: queryKeys.match(data.poNumber) });
       queryClient.invalidateQueries({ queryKey: queryKeys.summary(data.poNumber) });
       queryClient.invalidateQueries({ queryKey: queryKeys.matchAudit(data.poNumber) });

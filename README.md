@@ -101,7 +101,7 @@ All routes except `/health` and `/auth/login` require `Authorization: Bearer <to
 | Method | Endpoint | Description |
 |---|---|---|
 | `POST` | `/auth/login` | Get Bearer token |
-| `POST` | `/documents/upload` | Upload PDF/image (202 + job poll) |
+| `POST` | `/documents/upload` | Upload PDF/image (202 + job poll; result includes `matchStatus`) |
 | `GET` | `/documents/upload/jobs/:jobId` | Poll upload status |
 | `GET` | `/documents` | List documents |
 | `GET` | `/match/:poNumber` | Item-level match result |

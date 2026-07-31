@@ -74,4 +74,13 @@ async function getMatchByPoNumber(poNumber) {
   };
 }
 
-export { getMatchByPoNumber, fetchDocumentsByPoNumber };
+async function getMatchSummaryByPoNumber(poNumber) {
+  const match = await getMatchByPoNumber(poNumber);
+
+  return {
+    status: match.status,
+    reasons: match.reasons,
+  };
+}
+
+export { getMatchByPoNumber, getMatchSummaryByPoNumber, fetchDocumentsByPoNumber };

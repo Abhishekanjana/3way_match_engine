@@ -13,7 +13,7 @@ import {
   processingTitle,
   UPLOAD_PHASES,
 } from '@/lib/upload-progress';
-import { cn } from '@/lib/utils';
+import { cn, matchStatusLabel } from '@/lib/utils';
 import { useUploadDocument } from '@/hooks/useMatch';
 import { UploadProcessingCard } from '@/components/upload/UploadProcessingCard';
 import type { DocumentType, UploadProgressStatus, UploadResponse } from '@/types/api';
@@ -167,6 +167,7 @@ export function UploadModal({
   const [dragActive, setDragActive] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [duplicateNotice, setDuplicateNotice] = useState<string | null>(null);
+  const [matchNotice, setMatchNotice] = useState<string | null>(null);
   const [activeProgress, setActiveProgress] = useState<UploadProgressStatus | 'pending'>('pending');
   const [activeStep, setActiveStep] = useState('');
   const [lastResult, setLastResult] = useState<UploadResponse | null>(null);
@@ -177,6 +178,7 @@ export function UploadModal({
     setDragActive(false);
     setFormError(null);
     setDuplicateNotice(null);
+    setMatchNotice(null);
     setActiveProgress('pending');
     setActiveStep('');
     setLastResult(null);
@@ -244,6 +246,7 @@ export function UploadModal({
 
     setFormError(null);
     setDuplicateNotice(null);
+    setMatchNotice(null);
     setIsProcessing(true);
 
     let latestResult: UploadResponse | null = null;
@@ -279,6 +282,7 @@ export function UploadModal({
 
         latestResult = result;
         setLastResult(result);
+        setMatchNotice(`Match status: ${matchStatusLabel(result.matchStatus)}`);
 
         if (result.duplicateWarnings?.length) {
           duplicateMessages.push(
@@ -289,7 +293,11 @@ export function UploadModal({
         setQueue((current) =>
           current.map((entry) =>
             entry.id === item.id
-              ? { ...entry, status: 'completed', step: 'Matched' }
+              ? {
+                  ...entry,
+                  status: 'completed',
+                  step: `Match: ${matchStatusLabel(result.matchStatus)}`,
+                }
               : entry
           )
         );
@@ -318,7 +326,9 @@ export function UploadModal({
 
     setIsProcessing(false);
     setActiveProgress('completed');
-    setActiveStep('Matched');
+    setActiveStep(
+      latestResult ? `Match: ${matchStatusLabel(latestResult.matchStatus)}` : 'Complete'
+    );
 
     if (duplicateMessages.length > 0) {
       setDuplicateNotice([...new Set(duplicateMessages)].join(' '));
@@ -529,6 +539,12 @@ export function UploadModal({
 
       {/* Full-width footer — avoids buttons straddling the column divider */}
       <div className="border-t border-brand-border bg-brand-card/30 px-6 py-4">
+        {matchNotice && (
+          <div className="mb-3 rounded-lg border border-brand-primary/20 bg-brand-primary-light px-3 py-2 text-sm text-brand-foreground">
+            {matchNotice}
+          </div>
+        )}
+
         {duplicateNotice && (
           <div className="mb-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
             {duplicateNotice} Match status will show duplicate conflict.

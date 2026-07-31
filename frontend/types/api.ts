@@ -121,6 +121,8 @@ export type UploadResponse = {
   documentType: DocumentType;
   poNumber: string;
   duplicateWarnings: Array<{ code: string; message: string }>;
+  matchStatus: MatchStatus;
+  matchReasons: MatchReason[];
   document: StoredDocument;
 };
 
@@ -132,7 +134,7 @@ export type UploadJobAccepted = {
 
 export type UploadJobStatus = {
   jobId: string;
-  status: 'queued' | 'parsing' | 'resolving' | 'saving' | 'completed' | 'failed';
+  status: 'queued' | 'parsing' | 'resolving' | 'saving' | 'matching' | 'completed' | 'failed';
   step: string;
   result?: UploadResponse;
   error?: { code: string; message: string };

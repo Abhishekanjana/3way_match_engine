@@ -6,7 +6,8 @@ export const UPLOAD_PHASES: Array<{ status: UploadProgressStatus | 'pending'; la
   { status: 'parsing', label: 'Parsing' },
   { status: 'resolving', label: 'Mapping' },
   { status: 'saving', label: 'Saving' },
-  { status: 'completed', label: 'Matched' },
+  { status: 'matching', label: 'Matching' },
+  { status: 'completed', label: 'Done' },
 ];
 
 export function phaseIndex(status: UploadProgressStatus | 'pending' | 'failed'): number {

@@ -10,6 +10,7 @@ import { parseDocumentDate } from '../utils/date.js';
 import { parseDocument } from './gemini.service.js';
 import { resolveItems } from './masterResolver.service.js';
 import { checkDuplicates } from './duplicateCheck.service.js';
+import { getMatchSummaryByPoNumber } from './match.service.js';
 
 const MODELS_BY_TYPE = {
   po: PurchaseOrder,
@@ -158,11 +159,17 @@ async function uploadDocument(file, documentType, options = {}) {
       await appendAuditStep(poNumber, 'duplicate_check', 'success', 'No duplicate conflicts');
     }
 
+    setPhase('matching', 'Computing match status…');
+    const { status: matchStatus, reasons: matchReasons } = await getMatchSummaryByPoNumber(poNumber);
+    await appendAuditStep(poNumber, 'match', 'success', `Match status: ${matchStatus}`);
+
     return {
       documentId: String(document._id),
       documentType,
       poNumber,
       duplicateWarnings,
+      matchStatus,
+      matchReasons,
       document: shapeDocumentResponse(document, documentType),
     };
   } catch (error) {
