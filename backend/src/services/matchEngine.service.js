@@ -4,6 +4,7 @@ import {
   HARD_VIOLATION_CODES,
   SOFT_WARNING_CODES,
 } from '../utils/reasonCodes.js';
+import { formatDateLabel, formatItemReasonMessage } from '../utils/reasonMessages.js';
 import { normalizeCode } from './masterResolver.service.js';
 
 function startOfDay(value) {
@@ -314,7 +315,7 @@ function collectDocumentLevelReasons({ purchaseOrders, grns, invoices, reference
     addReason(
       reasons,
       REASON_CODES.DUPLICATE_PO,
-      `Multiple PO documents exist for ${referencePo.poNumber}`,
+      `Multiple PO documents uploaded for ${referencePo.poNumber}; earliest PO is used for matching`,
       'hard'
     );
   }
@@ -357,7 +358,7 @@ function collectDocumentLevelReasons({ purchaseOrders, grns, invoices, reference
         addReason(
           reasons,
           REASON_CODES.INVOICE_DATE_AFTER_PO_DATE,
-          `Invoice ${invoice.invoiceNumber} date is after PO date`,
+          `Invoice ${invoice.invoiceNumber} dated ${formatDateLabel(invoice.invoiceDate)} is after PO date ${formatDateLabel(referencePo.poDate)}`,
           'hard'
         );
       }
@@ -373,7 +374,7 @@ function collectItemReasons(items) {
   for (const item of items) {
     for (const code of item.reasons) {
       const level = HARD_VIOLATION_CODES.has(code) ? 'hard' : 'soft';
-      const message = `${code} on item ${item.itemCode || item.matchKey}`;
+      const message = formatItemReasonMessage(code, item);
       addReason(reasons, code, message, level);
     }
   }

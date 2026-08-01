@@ -121,6 +121,7 @@ export type UploadResponse = {
   documentType: DocumentType;
   poNumber: string;
   duplicateWarnings: Array<{ code: string; message: string }>;
+  duplicateIgnored?: boolean;
   matchStatus: MatchStatus;
   matchReasons: MatchReason[];
   document: StoredDocument;

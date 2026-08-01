@@ -6,6 +6,7 @@ import ApiError from '../utils/ApiError.js';
 import { computeMatch } from './matchEngine.service.js';
 import { liveResolvePoBundle } from './documentResolve.service.js';
 import { HARD_VIOLATION_CODES, SOFT_WARNING_CODES } from '../utils/reasonCodes.js';
+import { dedupeInvoicesByNumber } from '../utils/documentDedup.js';
 
 async function fetchDocumentsByPoNumber(poNumber) {
   const [purchaseOrders, grns, invoices] = await Promise.all([
@@ -58,8 +59,14 @@ async function getMatchByPoNumber(poNumber) {
   }
 
   const { purchaseOrders, grns, invoices } = await liveResolvePoBundle(fetched);
+  const { unique: invoicesForMatch } = dedupeInvoicesByNumber(invoices);
   const skuMasters = await SkuMaster.find({}).lean();
-  const matchResult = computeMatch({ purchaseOrders, grns, invoices, skuMasters });
+  const matchResult = computeMatch({
+    purchaseOrders,
+    grns,
+    invoices: invoicesForMatch,
+    skuMasters,
+  });
 
   return {
     poNumber,
@@ -68,7 +75,7 @@ async function getMatchByPoNumber(poNumber) {
     linkedDocuments: {
       purchaseOrders: purchaseOrders.map((doc) => mapDocumentRef(doc, 'po')),
       grns: grns.map((doc) => mapDocumentRef(doc, 'grn')),
-      invoices: invoices.map((doc) => mapDocumentRef(doc, 'invoice')),
+      invoices: invoicesForMatch.map((doc) => mapDocumentRef(doc, 'invoice')),
     },
     items: matchResult.items,
   };

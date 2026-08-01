@@ -4,6 +4,7 @@ import Invoice from '../models/Invoice.js';
 import SkuMaster from '../models/SkuMaster.js';
 import ApiError from '../utils/ApiError.js';
 import { liveResolvePoBundle } from './documentResolve.service.js';
+import { dedupeInvoicesByNumber } from '../utils/documentDedup.js';
 
 async function buildSkuRateMap(documents) {
   const skuIds = new Set();
@@ -188,16 +189,24 @@ async function getSummaryByPoNumber(poNumber) {
   }
 
   const { purchaseOrders, grns, invoices } = await liveResolvePoBundle(fetched);
+  const { unique: invoicesForSummary } = dedupeInvoicesByNumber(invoices);
   const referencePo = purchaseOrders[0] ?? null;
-  const allDocuments = referencePo ? [referencePo, ...grns, ...invoices] : [...grns, ...invoices];
+  const allDocuments = referencePo
+    ? [referencePo, ...grns, ...invoicesForSummary]
+    : [...grns, ...invoicesForSummary];
   const skuRateMap = await buildSkuRateMap(allDocuments);
 
-  const { rows, currentStatus } = buildSummaryRows(poNumber, referencePo, invoices, grns);
+  const { rows, currentStatus } = buildSummaryRows(
+    poNumber,
+    referencePo,
+    invoicesForSummary,
+    grns
+  );
 
   return {
     poNumber,
     poAmount: referencePo ? roundCurrency(sumPoAmount(referencePo, skuRateMap)) : 0,
-    totalInvoiced: roundCurrency(sumInvoiceAmount(invoices)),
+    totalInvoiced: roundCurrency(sumInvoiceAmount(invoicesForSummary)),
     totalReceived: roundCurrency(sumReceivedAmount(grns, skuRateMap)),
     rows,
     currentStatus,

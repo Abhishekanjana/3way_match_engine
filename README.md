@@ -88,7 +88,7 @@ Swagger UI: `http://localhost:5000/api-docs`
 
 **Master lookup:** `skuErpCode` → `eanCode` → null (soft warning). Re-resolved on every `GET /match` and `GET /summary` — create a SKU after upload and the next read picks it up.
 
-**Match engine** (`computeMatch()` in `backend/src/services/matchEngine.service.js`): always recomputed, never cached. Sums quantities per SKU across multiple GRNs/Invoices. Earliest PO wins on duplicates.
+**Match engine** (`computeMatch()` in `backend/src/services/matchEngine.service.js`): always recomputed, never cached. Sums quantities per SKU across multiple GRNs/Invoices. Earliest PO wins on duplicates. Re-uploading the same invoice number is accepted and stored, but only the earliest copy is counted in match and summary.
 
 **Out-of-order:** documents link by `poNumber` string, not a PO foreign key.
 

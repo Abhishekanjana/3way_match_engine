@@ -1,5 +1,4 @@
 import { AlertTriangle } from 'lucide-react';
-import { REASON_LABELS } from '@/lib/utils';
 import type { MatchReason } from '@/types/api';
 
 const PO_VIEW_CODES = new Set([
@@ -22,9 +21,7 @@ export function MismatchBanner({ reasons }: { reasons: MatchReason[] }) {
     return null;
   }
 
-  const labels = Array.from(
-    new Set(visible.map((reason) => REASON_LABELS[reason.code] ?? reason.message))
-  );
+  const labels = Array.from(new Set(visible.map((reason) => reason.message)));
 
   return (
     <div className="mx-4 mt-3 flex gap-3 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">

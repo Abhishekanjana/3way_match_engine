@@ -11,6 +11,7 @@ import { parseDocument } from './gemini.service.js';
 import { resolveItems } from './masterResolver.service.js';
 import { checkDuplicates } from './duplicateCheck.service.js';
 import { getMatchSummaryByPoNumber } from './match.service.js';
+import { REASON_CODES } from '../utils/reasonCodes.js';
 
 const MODELS_BY_TYPE = {
   po: PurchaseOrder,
@@ -163,11 +164,16 @@ async function uploadDocument(file, documentType, options = {}) {
     const { status: matchStatus, reasons: matchReasons } = await getMatchSummaryByPoNumber(poNumber);
     await appendAuditStep(poNumber, 'match', 'success', `Match status: ${matchStatus}`);
 
+    const duplicateIgnored = duplicateWarnings.some(
+      (warning) => warning.code === REASON_CODES.DUPLICATE_INVOICE_IGNORED
+    );
+
     return {
       documentId: String(document._id),
       documentType,
       poNumber,
       duplicateWarnings,
+      duplicateIgnored,
       matchStatus,
       matchReasons,
       document: shapeDocumentResponse(document, documentType),

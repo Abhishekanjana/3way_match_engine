@@ -6,7 +6,7 @@ export const REASON_LABELS: Record<string, string> = {
   grn_qty_exceeds_po_qty: 'GRN Quantity Exceeds PO',
   invoice_qty_exceeds_grn_qty: 'Invoice Quantity Exceeds GRN',
   invoice_qty_exceeds_po_qty: 'Invoice Quantity Exceeds PO',
-  invoice_date_after_po_date: 'Invoice Date Before PO Date',
+  invoice_date_after_po_date: 'Invoice Date After PO Date',
   item_missing_in_po: 'Item Missing in PO',
   unmapped_master_sku: 'Unmapped SKU(s)',
 };

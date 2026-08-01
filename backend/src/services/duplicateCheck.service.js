@@ -5,7 +5,8 @@ import { REASON_CODES } from '../utils/reasonCodes.js';
 
 /**
  * Post-persistence duplicate detection.
- * Duplicates are stored (per assignment) and surfaced here + on GET /match.
+ * PO/GRN duplicates are stored and surfaced as conflicts.
+ * Invoice re-uploads are stored for audit but not double-counted in match.
  */
 async function checkDuplicates(documentType, poNumber, documentNumber) {
   const warnings = [];
@@ -33,8 +34,8 @@ async function checkDuplicates(documentType, poNumber, documentNumber) {
     const count = await Invoice.countDocuments({ poNumber, invoiceNumber: documentNumber });
     if (count > 1) {
       warnings.push({
-        code: REASON_CODES.DUPLICATE_DOCUMENT,
-        message: `Duplicate Invoice ${documentNumber} for ${poNumber}`,
+        code: REASON_CODES.DUPLICATE_INVOICE_IGNORED,
+        message: `Invoice ${documentNumber} already exists for ${poNumber}; stored for audit but not double-counted`,
       });
     }
   }

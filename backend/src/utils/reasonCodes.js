@@ -9,6 +9,7 @@ const REASON_CODES = {
   INVOICE_DATE_AFTER_PO_DATE: 'invoice_date_after_po_date',
   DUPLICATE_PO: 'duplicate_po',
   DUPLICATE_DOCUMENT: 'duplicate_document',
+  DUPLICATE_INVOICE_IGNORED: 'duplicate_invoice_ignored',
   ITEM_MISSING_IN_PO: 'item_missing_in_po',
   PRICE_MISMATCH: 'price_mismatch',
   MRP_MISMATCH: 'mrp_mismatch',
