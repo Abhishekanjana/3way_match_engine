@@ -25,6 +25,8 @@ function createApp() {
   app.use(
     helmet({
       crossOriginResourcePolicy: { policy: 'cross-origin' },
+      // Swagger UI needs inline scripts/styles; CSP blocks a blank white page.
+      contentSecurityPolicy: false,
     })
   );
   app.use(
@@ -52,7 +54,24 @@ function createApp() {
     res.json({ status: 'ok', env: config.env });
   });
 
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+  // Trailing slash avoids broken relative asset URLs behind /api/backend.
+  app.get('/api-docs', (req, res) => {
+    const target = req.originalUrl.endsWith('/') ? req.originalUrl : `${req.originalUrl}/`;
+    res.redirect(301, target);
+  });
+
+  app.use(
+    '/api-docs',
+    swaggerUi.serve,
+    swaggerUi.setup(swaggerSpec, {
+      customSiteTitle: 'Three-Way Match Engine API',
+      customCss: '.swagger-ui .topbar { display: none }',
+      swaggerOptions: {
+        persistAuthorization: true,
+      },
+    })
+  );
+
   app.get('/api-docs.json', (_req, res) => {
     res.json(swaggerSpec);
   });

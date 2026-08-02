@@ -119,17 +119,6 @@ All routes except `/health` and `/auth/login` require `Authorization: Bearer <to
 | `GET` | `/summary/:poNumber` | Summary stats + cumulative table |
 | `GET/POST/PATCH/DELETE` | `/masters/sku` | SKU Master CRUD |
 
-```bash
-# Upload
-curl -X POST http://localhost:5000/documents/upload \
-  -H "Authorization: Bearer TOKEN" \
-  -F "file=@PO.pdf" -F "documentType=po"
-
-# Match
-curl http://localhost:5000/match/CI4PO05788 \
-  -H "Authorization: Bearer TOKEN"
-```
-
 ---
 
 ## Match Status & Reasons
