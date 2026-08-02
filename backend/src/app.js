@@ -9,9 +9,13 @@ import { successHandler, errorHandler as morganErrorHandler } from './config/mor
 import { swaggerSpec } from './config/swagger.js';
 import v1Routes from './routes/v1/index.js';
 import { notFoundHandler, errorConverter, errorHandler } from './middlewares/errorHandler.js';
+import { stripApiMountPrefix } from './middlewares/stripApiMountPrefix.js';
 
 function createApp() {
   const app = express();
+
+  // Vercel routes /api/backend/* to this service with the prefix intact.
+  app.use(stripApiMountPrefix);
 
   if (config.env !== 'test') {
     app.use(successHandler);

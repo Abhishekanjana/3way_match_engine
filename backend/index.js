@@ -1,8 +1,5 @@
 import { getApp } from './src/bootstrap.js';
 
-const appPromise = getApp();
+const app = await getApp();
 
-export default async function handler(req, res) {
-  const app = await appPromise;
-  return app(req, res);
-}
+export default app;
