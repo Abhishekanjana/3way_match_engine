@@ -3,10 +3,10 @@ import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
 import mongoSanitize from 'express-mongo-sanitize';
-import swaggerUi from 'swagger-ui-express';
 import config from './config/config.js';
 import { successHandler, errorHandler as morganErrorHandler } from './config/morgan.js';
 import { swaggerSpec } from './config/swagger.js';
+import { renderSwaggerUi } from './config/swaggerHtml.js';
 import v1Routes from './routes/v1/index.js';
 import { notFoundHandler, errorConverter, errorHandler } from './middlewares/errorHandler.js';
 import { stripApiMountPrefix } from './middlewares/stripApiMountPrefix.js';
@@ -54,21 +54,11 @@ function createApp() {
     res.json({ status: 'ok', env: config.env });
   });
 
-  app.use(
-    '/api-docs',
-    swaggerUi.serve,
-    swaggerUi.setup(swaggerSpec, {
-      customSiteTitle: 'Three-Way Match Engine API',
-      customCss: '.swagger-ui .topbar { display: none }',
-      swaggerOptions: {
-        persistAuthorization: true,
-      },
-    })
-  );
-
   app.get('/api-docs.json', (_req, res) => {
     res.json(swaggerSpec);
   });
+
+  app.get(['/api-docs', '/api-docs/'], renderSwaggerUi);
 
   app.use(v1Routes);
 
