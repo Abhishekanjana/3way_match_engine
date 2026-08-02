@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { ChevronLeft, ChevronRight, Home, LogOut, Package, Upload } from 'lucide-react';
+import { FinifiLogo } from '@/components/brand/FinifiLogo';
 import { clearToken } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 
@@ -152,14 +152,7 @@ export function Sidebar({ onUploadClick }: { onUploadClick?: () => void }) {
             href="/dashboard"
             className="absolute inset-0 flex items-center justify-center"
           >
-            <Image
-              src="/logos/logo-finifi-full.png"
-              alt="Finifi"
-              width={160}
-              height={40}
-              priority
-              className="h-8 w-auto max-w-[148px] object-contain"
-            />
+            <FinifiLogo variant="full" priority />
           </Link>
           <button
             type="button"
@@ -178,14 +171,7 @@ export function Sidebar({ onUploadClick }: { onUploadClick?: () => void }) {
       ) : (
         <div className="mb-4 flex shrink-0 flex-col items-center justify-center gap-2 px-2">
           <Link href="/dashboard" className="flex h-9 items-center justify-center">
-            <Image
-              src="/logos/logo-finifi-icon.png"
-              alt="Finifi"
-              width={40}
-              height={40}
-              priority
-              className="h-9 w-9 object-contain"
-            />
+            <FinifiLogo variant="icon" priority className="h-9 w-9" />
           </Link>
           <button
             type="button"
