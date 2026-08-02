@@ -47,10 +47,10 @@ const config = {
     model: envVars.GEMINI_MODEL,
   },
   cloudinary: {
-    cloudName: envVars.CLOUDINARY_CLOUD_NAME,
-    apiKey: envVars.CLOUDINARY_API_KEY,
-    apiSecret: envVars.CLOUDINARY_API_SECRET,
-    folder: envVars.CLOUDINARY_FOLDER,
+    cloudName: String(envVars.CLOUDINARY_CLOUD_NAME).trim(),
+    apiKey: String(envVars.CLOUDINARY_API_KEY).trim(),
+    apiSecret: String(envVars.CLOUDINARY_API_SECRET).trim(),
+    folder: String(envVars.CLOUDINARY_FOLDER).trim(),
   },
   upload: {
     maxFileSizeMb: envVars.MAX_FILE_SIZE_MB,

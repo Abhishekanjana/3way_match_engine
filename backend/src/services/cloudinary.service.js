@@ -31,7 +31,6 @@ function uploadBuffer(buffer, { mimeType, documentType }) {
         folder: `${config.cloudinary.folder}/${documentType}`,
         public_id: buildPublicId(documentType),
         resource_type: mimeType === 'application/pdf' ? 'raw' : 'image',
-        overwrite: false,
       },
       (error, result) => {
         if (error) {

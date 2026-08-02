@@ -46,7 +46,18 @@ npm install && npm run dev
 
 Or from root: `npm run install:all`, then `npm run dev:backend` and `npm run dev:frontend` in separate terminals.
 
-Swagger UI: `http://localhost:5000/api-docs`
+Swagger UI (local): `http://localhost:5000/api-docs`
+
+---
+
+## Live
+
+| Resource | URL |
+|---|---|
+| App | https://3way-match-engine.vercel.app |
+| Health | https://3way-match-engine.vercel.app/api/backend/health |
+| Swagger UI | https://3way-match-engine.vercel.app/api/backend/api-docs |
+| OpenAPI JSON | https://3way-match-engine.vercel.app/api/backend/api-docs.json |
 
 ---
 
