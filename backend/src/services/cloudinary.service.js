@@ -17,24 +17,21 @@ function isRemoteFileUrl(value) {
   return typeof value === 'string' && /^https?:\/\//i.test(value);
 }
 
-function sanitizeFileName(originalName) {
-  const baseName = path.basename(originalName || 'document');
-  return baseName.replace(/[^\w.\-() ]+/g, '_');
+function buildPublicId(documentType) {
+  const stamp = Date.now();
+  const random = Math.round(Math.random() * 1e9);
+  return `${documentType}_${stamp}_${random}`;
 }
 
-function uploadBuffer(buffer, { originalName, mimeType, documentType }) {
+function uploadBuffer(buffer, { mimeType, documentType }) {
   return new Promise((resolve, reject) => {
+    // Keep upload params free of spaces/parentheses — those break Cloudinary signatures.
     const uploadStream = cloudinary.uploader.upload_stream(
       {
         folder: `${config.cloudinary.folder}/${documentType}`,
-        resource_type: 'auto',
-        use_filename: true,
-        unique_filename: true,
-        filename_override: sanitizeFileName(originalName),
-        context: {
-          original_file_name: originalName || '',
-          mime_type: mimeType || '',
-        },
+        public_id: buildPublicId(documentType),
+        resource_type: mimeType === 'application/pdf' ? 'raw' : 'image',
+        overwrite: false,
       },
       (error, result) => {
         if (error) {
@@ -57,7 +54,6 @@ async function uploadDocumentFile(file, documentType) {
 
   try {
     const result = await uploadBuffer(file.buffer, {
-      originalName: file.originalname,
       mimeType: file.mimetype,
       documentType,
     });
