@@ -22,6 +22,7 @@ const envSchema = Joi.object({
   CLOUDINARY_API_SECRET: Joi.string().required(),
   CLOUDINARY_FOLDER: Joi.string().default('three-way-match'),
   MAX_FILE_SIZE_MB: Joi.number().default(10),
+  PUBLIC_API_URL: Joi.string().uri().allow('').optional(),
 }).unknown();
 
 const { value: envVars, error } = envSchema.validate(process.env, {
@@ -54,6 +55,7 @@ const config = {
   upload: {
     maxFileSizeMb: envVars.MAX_FILE_SIZE_MB,
   },
+  publicApiUrl: envVars.PUBLIC_API_URL || '',
   backendRoot: BACKEND_ROOT,
 };
 

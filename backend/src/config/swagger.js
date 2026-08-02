@@ -1,6 +1,15 @@
 import swaggerJsdoc from 'swagger-jsdoc';
 import config from './config.js';
 
+const servers = [
+  { url: '/', description: 'Current host' },
+  { url: `http://localhost:${config.port}`, description: 'Local' },
+];
+
+if (config.publicApiUrl) {
+  servers.unshift({ url: config.publicApiUrl, description: 'Production' });
+}
+
 const swaggerOptions = {
   definition: {
     openapi: '3.0.0',
@@ -9,7 +18,7 @@ const swaggerOptions = {
       version: '1.0.0',
       description: 'PO, GRN, and Invoice reconciliation API',
     },
-    servers: [{ url: `http://localhost:${config.port}`, description: 'Local' }],
+    servers,
     components: {
       securitySchemes: {
         bearerAuth: {
