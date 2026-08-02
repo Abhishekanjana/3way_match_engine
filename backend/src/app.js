@@ -54,12 +54,6 @@ function createApp() {
     res.json({ status: 'ok', env: config.env });
   });
 
-  // Trailing slash avoids broken relative asset URLs behind /api/backend.
-  app.get('/api-docs', (req, res) => {
-    const target = req.originalUrl.endsWith('/') ? req.originalUrl : `${req.originalUrl}/`;
-    res.redirect(301, target);
-  });
-
   app.use(
     '/api-docs',
     swaggerUi.serve,
