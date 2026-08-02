@@ -39,9 +39,8 @@ const listPoNumbers = catchAsync(async (_req, res) => {
 });
 
 const getFile = catchAsync(async (req, res) => {
-  const { absolutePath, mimeType, originalFileName } = await documentService.getDocumentFile(
-    req.params.id
-  );
+  const fileData = await documentService.getDocumentFile(req.params.id);
+  const { mimeType, originalFileName } = fileData;
 
   const isPreview = req.get('X-Document-Preview') === '1';
 
@@ -65,7 +64,12 @@ const getFile = catchAsync(async (req, res) => {
     );
   }
 
-  res.sendFile(absolutePath);
+  if (fileData.buffer) {
+    res.send(fileData.buffer);
+    return;
+  }
+
+  res.sendFile(fileData.absolutePath);
 });
 
 export { upload, getUploadJob, getById, list, listPoNumbers, getFile };

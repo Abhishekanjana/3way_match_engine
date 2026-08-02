@@ -12,6 +12,7 @@ import { resolveItems } from './masterResolver.service.js';
 import { checkDuplicates } from './duplicateCheck.service.js';
 import { getMatchSummaryByPoNumber } from './match.service.js';
 import { REASON_CODES } from '../utils/reasonCodes.js';
+import { fetchFileBuffer, isRemoteFileUrl } from './cloudinary.service.js';
 
 const MODELS_BY_TYPE = {
   po: PurchaseOrder,
@@ -34,7 +35,7 @@ async function appendAuditStep(poNumber, step, status, message) {
 function buildPersistPayload(documentType, parsed, file, rawParsed) {
   const base = {
     rawParsed,
-    filePath: file.path,
+    filePath: file.storageUrl || file.path,
     originalFileName: file.originalname,
     mimeType: file.mimetype,
   };
@@ -230,6 +231,17 @@ async function getDocumentFile(id) {
   }
 
   const { document } = result;
+
+  if (isRemoteFileUrl(document.filePath)) {
+    const buffer = await fetchFileBuffer(document.filePath);
+
+    return {
+      buffer,
+      mimeType: document.mimeType,
+      originalFileName: document.originalFileName,
+    };
+  }
+
   const absolutePath = path.resolve(document.filePath);
 
   if (!fs.existsSync(absolutePath)) {

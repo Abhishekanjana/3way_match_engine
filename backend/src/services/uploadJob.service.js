@@ -1,18 +1,26 @@
+import fs from 'node:fs/promises';
 import logger from '../config/logger.js';
 import UploadJob from '../models/UploadJob.js';
 import ApiError from '../utils/ApiError.js';
 import * as documentService from './document.service.js';
+import {
+  downloadToTempFile,
+  isRemoteFileUrl,
+  uploadDocumentFile,
+} from './cloudinary.service.js';
 
 async function updateJob(jobId, patch) {
   return UploadJob.findByIdAndUpdate(jobId, patch, { new: true });
 }
 
 async function createJob(file, documentType) {
+  const { secureUrl } = await uploadDocumentFile(file, documentType);
+
   return UploadJob.create({
     status: 'queued',
     step: 'Upload received',
     documentType,
-    filePath: file.path,
+    filePath: secureUrl,
     originalFileName: file.originalname,
     mimeType: file.mimetype,
   });
@@ -22,6 +30,14 @@ async function getJob(jobId) {
   return UploadJob.findById(jobId).lean();
 }
 
+async function materializeJobFile(job) {
+  if (isRemoteFileUrl(job.filePath)) {
+    return downloadToTempFile(job.filePath, job.mimeType, job.originalFileName);
+  }
+
+  return job.filePath;
+}
+
 async function processJob(jobId) {
   const job = await UploadJob.findById(jobId);
 
@@ -29,13 +45,19 @@ async function processJob(jobId) {
     return;
   }
 
-  const file = {
-    path: job.filePath,
-    originalname: job.originalFileName,
-    mimetype: job.mimeType,
-  };
+  let tempPath;
+  const shouldCleanupTemp = isRemoteFileUrl(job.filePath);
 
   try {
+    tempPath = await materializeJobFile(job);
+
+    const file = {
+      path: tempPath,
+      originalname: job.originalFileName,
+      mimetype: job.mimeType,
+      storageUrl: job.filePath,
+    };
+
     const result = await documentService.uploadDocument(file, job.documentType, {
       onPhase: ({ status, step }) => updateJob(jobId, { status, step }),
     });
@@ -66,6 +88,10 @@ async function processJob(jobId) {
       step: 'Upload failed',
       error: { code, message },
     });
+  } finally {
+    if (tempPath && shouldCleanupTemp) {
+      await fs.unlink(tempPath).catch(() => {});
+    }
   }
 }
 

@@ -24,7 +24,7 @@ The app checks they agree before payment. Upload in any order — an Invoice bef
 | Frontend | Next.js 14, TypeScript, Tailwind CSS |
 | State | TanStack Query v5 |
 | Parsing | Google Gemini API (`gemini-3.5-flash-lite`) |
-| Uploads | Multer |
+| Uploads | Multer + Cloudinary |
 | Auth | Mock Bearer token |
 
 ---
@@ -36,7 +36,7 @@ The app checks they agree before payment. Upload in any order — an Invoice bef
 ```bash
 # Backend (port 5000)
 cd backend
-cp .env.example .env   # set MONGODB_URI, GEMINI_API_KEY, AUTH_TOKEN
+cp .env.example .env   # set MONGODB_URI, GEMINI_API_KEY, AUTH_TOKEN, CLOUDINARY_*
 npm install && npm run dev
 
 # Frontend (port 3000)

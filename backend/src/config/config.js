@@ -17,7 +17,10 @@ const envSchema = Joi.object({
   AUTH_TOKEN: Joi.string().default('dev-static-token-change-in-production'),
   GEMINI_API_KEY: Joi.string().allow('').optional(),
   GEMINI_MODEL: Joi.string().default('gemini-3.5-flash-lite'),
-  UPLOAD_DIR: Joi.string().default('uploads'),
+  CLOUDINARY_CLOUD_NAME: Joi.string().required(),
+  CLOUDINARY_API_KEY: Joi.string().required(),
+  CLOUDINARY_API_SECRET: Joi.string().required(),
+  CLOUDINARY_FOLDER: Joi.string().default('three-way-match'),
   MAX_FILE_SIZE_MB: Joi.number().default(10),
 }).unknown();
 
@@ -42,10 +45,13 @@ const config = {
     apiKey: envVars.GEMINI_API_KEY || '',
     model: envVars.GEMINI_MODEL,
   },
+  cloudinary: {
+    cloudName: envVars.CLOUDINARY_CLOUD_NAME,
+    apiKey: envVars.CLOUDINARY_API_KEY,
+    apiSecret: envVars.CLOUDINARY_API_SECRET,
+    folder: envVars.CLOUDINARY_FOLDER,
+  },
   upload: {
-    dir: path.isAbsolute(envVars.UPLOAD_DIR)
-      ? envVars.UPLOAD_DIR
-      : path.join(BACKEND_ROOT, envVars.UPLOAD_DIR),
     maxFileSizeMb: envVars.MAX_FILE_SIZE_MB,
   },
   backendRoot: BACKEND_ROOT,
