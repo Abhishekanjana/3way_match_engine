@@ -1,7 +1,7 @@
 import type { ApiErrorBody, UploadJobStatus, UploadProgressUpdate, UploadResponse } from '@/types/api';
 import { getToken } from './auth';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? '/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? '/api/backend';
 const REQUEST_TIMEOUT_MS = 20_000;
 
 export class ApiClientError extends Error {

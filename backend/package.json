@@ -4,13 +4,14 @@
   "private": true,
   "type": "module",
   "description": "Three-Way Match Engine API — PO, GRN, Invoice reconciliation",
-  "main": "src/index.js",
+  "main": "index.js",
   "engines": {
     "node": ">=20.0.0"
   },
   "scripts": {
     "start": "cross-env NODE_ENV=production node src/index.js",
     "dev": "cross-env NODE_ENV=development nodemon src/index.js",
+    "vercel-build": "echo \"Express backend — no build step\"",
     "test": "node --test tests/**/*.test.js",
     "seed:sku": "node scripts/seedSkuMaster.js",
     "reset:data": "node scripts/reset-data.js",

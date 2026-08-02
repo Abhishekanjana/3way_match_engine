@@ -160,6 +160,44 @@ TanStack Query handles all server state. Upload modal polls the backend job with
 
 ## Production
 
+### Vercel (frontend + backend, recommended)
+
+The repo root `vercel.json` deploys both services from one project:
+
+| Service | Root | URL |
+|---|---|---|
+| Frontend (Next.js) | `frontend` | `https://your-app.vercel.app` |
+| Backend (Express) | `backend` | `https://your-app.vercel.app/api/backend` |
+
+1. Import the GitHub repo on [vercel.com](https://vercel.com)
+2. Use **Application Preset: Services** (auto-detected from `vercel.json`)
+3. Add env vars to the **backend** service:
+
+```text
+NODE_ENV=production
+MONGODB_URI=...
+AUTH_TOKEN=...
+GEMINI_API_KEY=...
+GEMINI_MODEL=gemini-3.5-flash-lite
+CLOUDINARY_CLOUD_NAME=...
+CLOUDINARY_API_KEY=...
+CLOUDINARY_API_SECRET=...
+CLOUDINARY_FOLDER=three-way-match
+PUBLIC_API_URL=https://YOUR-APP.vercel.app/api/backend
+```
+
+4. Add env vars to the **frontend** service:
+
+```text
+NEXT_PUBLIC_API_URL=/api/backend
+```
+
+5. Deploy, then test:
+   - Health: `https://YOUR-APP.vercel.app/api/backend/health`
+   - App: `https://YOUR-APP.vercel.app`
+
+### Self-hosted
+
 ```bash
 cd backend && npm install --omit=dev && npm run start
 cd frontend && npm run build && npm start

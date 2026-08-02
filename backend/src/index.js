@@ -1,43 +1,12 @@
-import mongoose from 'mongoose';
-import { createApp } from './app.js';
 import config from './config/config.js';
 import logger from './config/logger.js';
-import SkuMaster from './models/SkuMaster.js';
-import { seedSkuMasters } from './services/catalogSeed.service.js';
-import { scheduleReresolveAllDocuments } from './services/documentResolve.service.js';
-import { ensureDuplicateFriendlyIndexes } from './services/indexMigration.service.js';
+import { bootstrapApp } from './bootstrap.js';
 
 let server;
 
-async function ensureSampleCatalogSeeded() {
-  if (config.env !== 'development') {
-    return;
-  }
-
-  const skuCount = await SkuMaster.countDocuments();
-
-  if (skuCount > 0) {
-    return;
-  }
-
-  await seedSkuMasters();
-  scheduleReresolveAllDocuments();
-  logger.info('Seeded sample SKU Master catalogue; document re-resolution queued');
-}
-
 async function startServer() {
-  await mongoose.connect(config.mongoose.url);
-  logger.info('MongoDB connected');
+  const app = await bootstrapApp();
 
-  await ensureDuplicateFriendlyIndexes();
-
-  await ensureSampleCatalogSeeded();
-
-  if (!config.gemini.apiKey) {
-    logger.warn('GEMINI_API_KEY not set — document parsing will be unavailable');
-  }
-
-  const app = createApp();
   server = app.listen(config.port, () => {
     logger.info(`Server listening on port ${config.port}`, { env: config.env });
   });
